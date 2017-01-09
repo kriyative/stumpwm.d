@@ -58,8 +58,8 @@
     (run-shell-command "exec xscreensaver-command -exit")
     (setq *screensaver-proc* nil)))
 
-(defcommand enable-screen-saver () ()
-  "Enable screen saver"
+(defcommand activate-screen-saver () ()
+  "Activate screen saver"
   (run-shell-command "exec xscreensaver-command -activate"))
 
 (defcommand suspend () ()
