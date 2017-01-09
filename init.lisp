@@ -45,12 +45,16 @@
 (defcommand start-screen-saver () ()
   "Start screen saver"
   (unless (and *screensaver-proc* (sb-ext:process-alive-p *screensaver-proc*))
+    (message "Starting screen saver...")
+    (run-shell-command "exec xset +dpms")
     (setq *screensaver-proc*
           (run-shell-command "exec /usr/share/xscreensaver/xscreensaver-wrapper.sh -nosplash"))))
 
 (defcommand stop-screen-saver () ()
   "Stop screen saver"
+  (run-shell-command "exec xset -dpms")
   (when *screensaver-proc*
+    (message "Stopping screen saver...")
     (run-shell-command "exec xscreensaver-command -exit")
     (setq *screensaver-proc* nil)))
 
