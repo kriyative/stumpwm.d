@@ -1,3 +1,7 @@
 This is my [[https://stumpwm.github.io/][StumpWM]] configuration.
 
 I've forked [[https://github.com/kriyative/stumpwm-contrib][StumpWM Contrib]] as well, in case anyone's interested.
+
+Here's an uninteresting screenshot of my current setup:
+
+[[assets/screenshot.png][assets/screenshot.png]]
