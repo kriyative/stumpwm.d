@@ -145,6 +145,9 @@
   "Make CapsLock a Control key"
   (run-shell-command "exec setxkbmap -option ctrl:nocaps"))
 
+(defun init-mouse-pointer ()
+  (shell-commands "xsetroot -cursor_name left_ptr"))
+
 (defcommand gnome-settings-daemon () ()
   "Run the gnome-settings-daemon"
   (run-shell-command "exec gnome-settings-daemon"))
@@ -171,7 +174,8 @@
 ;; startup
 (gnome-settings-daemon)
 (capslock-as-control)
-(native-scrolling)
+(init-mouse-pointer)
+(setup-touchpad)
 (redshift-on)
 (start-screen-saver)
 
