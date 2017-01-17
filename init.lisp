@@ -123,12 +123,25 @@
   "Launch or raise conkeror"
   (run-or-raise "exec conkeror" '(:class "Conkeror")))
 
-(defcommand native-scrolling () ()
-  "Enable native scrolling on touchpad"
-  (run-shell-command "exec synclient VertScrollDelta=-111")
-  (run-shell-command "exec synclient HorizScrollDelta=-111"))
+(defun shell-commands (&rest commands)
+  (dolist (command commands)
+    (run-shell-command (concat "exec " command))))
 
-(defcommand capslock-as-control () ()
+(defun setup-touchpad ()
+  "Configure touchpad"
+  (shell-commands
+   (concat
+    "synclient"
+    " VertTwoFingerScroll=1"
+    " VertScrollDelta=-111"
+    " HorizScrollDelta=-111"
+    " HorizTwoFingerScroll=1"
+    " TapButton1=1"
+    " TapButton2=3"
+    " TapButton3=2"
+    " PalmDetect=1")))
+
+(defun capslock-as-control ()
   "Make CapsLock a Control key"
   (run-shell-command "exec setxkbmap -option ctrl:nocaps"))
 
