@@ -40,20 +40,23 @@
 
 (define-key *root-map* (kbd "l") "lock-screen")
 
+(defun process-live-p (p)
+  (and p (sb-ext:process-alive-p p)))
+
 (defvar *screensaver-proc* nil)
 
 (defcommand start-screen-saver () ()
   "Start screen saver"
-  (unless (and *screensaver-proc* (sb-ext:process-alive-p *screensaver-proc*))
+  (unless (process-live-p *screensaver-proc*)
     (message "Starting screen saver...")
     (run-shell-command "exec xset +dpms")
     (setq *screensaver-proc*
-          (run-shell-command "exec /usr/share/xscreensaver/xscreensaver-wrapper.sh -nosplash"))))
+          (run-shell-command "exec xscreensaver -no-splash"))))
 
 (defcommand stop-screen-saver () ()
   "Stop screen saver"
   (run-shell-command "exec xset -dpms")
-  (when *screensaver-proc*
+  (when (process-live-p *screensaver-proc*)
     (message "Stopping screen saver...")
     (run-shell-command "exec xscreensaver-command -exit")
     (setq *screensaver-proc* nil)))
@@ -98,13 +101,19 @@
 (define-key *top-map* (kbd "XF86MonBrightnessUp") "raise-brightness")
 (define-key *top-map* (kbd "XF86MonBrightnessDown") "lower-brightness")
 
+(defvar *redshift-proc* nil)
+
 (defcommand redshift-on () ()
   "Enable redshift"
-  (run-shell-command "exec redshift"))
+  (unless (process-live-p *redshift-proc*)
+    (setq *redshift-proc* (run-shell-command "exec redshift"))))
 
 (defcommand redshift-off () ()
   "Enable redshift"
-  (run-shell-command "exec redshift -x"))
+  (when (process-live-p *redshift-proc*)
+    (sb-ext:process-kill *redshift-proc* sb-unix:sighup)
+    (setq *redshift-proc* nil)
+    (run-shell-command "exec redshift -o -x")))
 
 (defcommand chromium () ()
   "Launch or raise chromium"
