@@ -77,6 +77,11 @@
 (define-key *top-map* (kbd "S-XF86AudioRaiseVolume") "amixer-Master-1+ pulse")
 (define-key *top-map* (kbd "XF86AudioMute") "amixer-Master-toggle pulse")
 
+(define-key *top-map* (kbd "XF86AudioPlay") "exec emacsclient -e '(emms-pause)'")
+(define-key *top-map* (kbd "XF86AudioStop") "exec emacsclient -e '(emms-stop)'")
+(define-key *top-map* (kbd "XF86AudioPrev") "exec emacsclient -e '(emms-previous)'")
+(define-key *top-map* (kbd "XF86AudioNext") "exec emacsclient -e '(emms-next)'")
+
 (defun change-brightness (amount)
   (run-shell-command (concat "exec xbacklight "
                              (if (< 0 amount) "-inc" "-dec")
