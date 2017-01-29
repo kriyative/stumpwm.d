@@ -122,7 +122,7 @@
 
 (defcommand chromium () ()
   "Launch or raise chromium"
-  (run-or-raise "exec chromium" '(:class "Chromium")))
+  (run-or-raise "exec chromium-browser" '(:class "Chromium")))
 
 (defcommand conkeror () ()
   "Launch or raise conkeror"
