@@ -209,3 +209,16 @@
 (chromium)
 
 ;; (run-shell-command "gnome-screensaver-command -a")
+
+;; (define-frame-preference
+;;     "Default"
+;;     ;; frame raise lock (lock AND raise == jumpto)
+;;     (  0     t     t    :class "Emacs24")
+;;   (    0     t     t    :class "Conkeror")
+;;   (    0     t     t    :class "Chromium-browser"))
+
+;; (gnewbg-float "flo")
+;; (define-frame-preference "flo"
+;;     ;; frame raise lock (lock AND raise == jumpto)
+;;     (  0     nil   t    :class "zoom"))
+;; (clear-window-placement-rules)
