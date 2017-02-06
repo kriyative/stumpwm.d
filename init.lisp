@@ -29,7 +29,7 @@
 
 (defcommand term () ()
   "Launch or raise a terminal window"
-  (run-or-raise "exec terminator" '(:class "terminator")))
+  (run-or-raise "exec gnome-terminal" '(:class "Gnome-terminal")))
 
 (define-key *root-map* (kbd "c") "term")
 
