@@ -91,6 +91,49 @@
   "Resize width of current frame to 66% of screen-width"
   (resize-width-pct 0.66))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defvar *screensaver-proc* nil)
+
+(defun start-screen-saver* ()
+  (run-shell-command "exec xset +dpms")
+  (unless (process-live-p *screensaver-proc*)
+    (message "Starting screen saver...")
+    (setq *screensaver-proc*
+          (run-shell-command "exec xscreensaver -no-splash"))))
+
+(defun stop-screen-saver* ()
+  (run-shell-command "exec xset -dpms")
+  (when (process-live-p *screensaver-proc*)
+    (message "Stopping screen saver...")
+    (run-shell-command "exec xscreensaver-command -exit")
+    (setq *screensaver-proc* nil)))
+
+(defcommand start-screen-saver () ()
+  "Start screen saver"
+  (start-screen-saver*))
+
+(defcommand stop-screen-saver () ()
+  "Stop screen saver"
+  (stop-screen-saver*))
+
+(defcommand activate-screen-saver () ()
+  "Activate screen saver"
+  (run-shell-command "exec xscreensaver-command -activate"))
+
+(defcommand lock-screen () ()
+  "Lock the screen, and power down the display"
+  ;; (run-shell-command "exec xset dpms force off")
+  (run-shell-command "exec xscreensaver-command -lock"))
+
+(define-key *root-map* (kbd "l") "lock-screen")
+
+(defcommand suspend () ()
+  "Suspend the system"
+  (run-shell-command "exec systemctl suspend"))
+
+(define-key *root-map* (kbd "z") "suspend")
+
 (load-module "amixer")
 (in-package :amixer)
 (defvolcontrol amixer-Master-10- "Master" "10%-")
@@ -116,46 +159,15 @@
         (setf *swank-p* t)
         (message "Starting swank on port 4005."))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defcommand term () ()
   "Launch or raise a terminal window"
   (run-or-pull "exec gnome-terminal" '(:class "Gnome-terminal")))
 
 (define-key *root-map* (kbd "c") "term")
 
-(defcommand lock-screen () ()
-  "Lock the screen, and power down the display"
-  ;; (run-shell-command "exec xset dpms force off")
-  (run-shell-command "exec xscreensaver-command -lock"))
-
-(define-key *root-map* (kbd "l") "lock-screen")
-
-(defvar *screensaver-proc* nil)
-
-(defcommand start-screen-saver () ()
-  "Start screen saver"
-  (unless (process-live-p *screensaver-proc*)
-    (message "Starting screen saver...")
-    (run-shell-command "exec xset +dpms")
-    (setq *screensaver-proc*
-          (run-shell-command "exec xscreensaver -no-splash"))))
-
-(defcommand stop-screen-saver () ()
-  "Stop screen saver"
-  (run-shell-command "exec xset -dpms")
-  (when (process-live-p *screensaver-proc*)
-    (message "Stopping screen saver...")
-    (run-shell-command "exec xscreensaver-command -exit")
-    (setq *screensaver-proc* nil)))
-
-(defcommand activate-screen-saver () ()
-  "Activate screen saver"
-  (run-shell-command "exec xscreensaver-command -activate"))
-
-(defcommand suspend () ()
-  "Suspend the system"
-  (run-shell-command "exec systemctl suspend"))
-
-(define-key *root-map* (kbd "z") "suspend")
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-10- pulse")
 (define-key *top-map* (kbd "XF86AudioRaiseVolume") "amixer-Master-10+ pulse")
