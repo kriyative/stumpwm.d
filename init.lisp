@@ -73,6 +73,24 @@
 
 (define-key *root-map* (kbd "C-f") "frame-redo")
 
+(defun resize-width-pct (pct)
+  (let* ((swidth (screen-width (current-screen)))
+         (twidth (round (* pct swidth)))
+         (group (current-group))
+         (frame (tile-group-current-frame group)))
+    (resize-frame group
+                  frame
+                  (- twidth (frame-width frame))
+                  :width)))
+
+(defcommand resize-33%-width () ()
+  "Resize width of current frame to 33% of screen-width"
+  (resize-width-pct 0.33))
+
+(defcommand resize-66%-width () ()
+  "Resize width of current frame to 66% of screen-width"
+  (resize-width-pct 0.66))
+
 (load-module "amixer")
 (in-package :amixer)
 (defvolcontrol amixer-Master-10- "Master" "10%-")
