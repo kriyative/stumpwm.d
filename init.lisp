@@ -219,6 +219,18 @@
 
 (define-key *root-map* (kbd "z") "suspend")
 
+;;;;;;;;;;;;;;;;
+
+(defun toggle-screensaver-on-fullscreen (window state)
+  (declare (ignore window))
+  (cond
+    ((eq :fullscreen state) (stop-screen-saver*))
+    ((eq :normal state) (start-screen-saver*))))
+
+(add-hook *fullscreen-hook* 'toggle-screensaver-on-fullscreen)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (load-module "amixer")
 (in-package :amixer)
 (defvolcontrol amixer-Master-10- "Master" "10%-")
