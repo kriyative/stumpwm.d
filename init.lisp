@@ -214,9 +214,8 @@
 (defcommand redshift-off () ()
   "Enable redshift"
   (when (process-live-p *redshift-proc*)
-    (sb-ext:process-kill *redshift-proc* sb-unix:sighup)
-    (setq *redshift-proc* nil)
-    (run-shell-command "exec redshift -o -x")))
+    (sb-ext:process-kill *redshift-proc* sb-unix:sigint)
+    (setq *redshift-proc* nil)))
 
 (defcommand chromium () ()
   "Launch or raise chromium"
