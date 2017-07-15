@@ -164,6 +164,18 @@
   "Resize width of current frame to 66% of screen-width"
   (resize-width-pct 0.66))
 
+(defvar ctlx-map (make-sparse-keymap))
+(define-key ctlx-map (kbd "0") "remove")
+(define-key ctlx-map (kbd "1") "only")
+(define-key ctlx-map (kbd "2") "vsplit")
+(define-key ctlx-map (kbd "3") "hsplit")
+(define-key ctlx-map (kbd "6") "resize-66%-width")
+(define-key ctlx-map (kbd "7") "resize-33%-width")
+(define-key ctlx-map (kbd "+") "balance-frames")
+(define-key ctlx-map (kbd "C-y") "show-clipboard-history")
+
+(define-key *root-map* (kbd "C-x") 'ctlx-map)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defvar *screensaver-proc* nil)
