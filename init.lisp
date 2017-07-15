@@ -26,6 +26,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defvar audio-profile-choices
+  '(("Built-in" "built-in")
+    ("MPow A2DP" "mpow.a2dp")
+    ("MPow Headset" "mpow.headset")))
+
+(defcommand set-audio-profile () ()
+  "Prompt with the list of audio profiles"
+  (let ((profile (second
+                  (select-from-menu (current-screen)
+                                    audio-profile-choices
+                                    nil))))
+    (run-shell-command (format nil "set-audio-profile ~a" profile))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun poll-selection (&optional (selection :primary))
   (xlib:convert-selection selection
                           :utf8_string
