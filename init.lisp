@@ -11,6 +11,12 @@
                (if (<= ,max-depth (length ,stack))
                    (subseq ,stack 0 (1- ,max-depth))
                    ,stack))))
+(define-stumpwm-type :shell (input prompt)
+  (declare (ignore prompt))
+  (let ((prompt (format nil "~A -c exec " *shell-program*)))
+    (or (argument-pop-rest input)
+        (completing-read (current-screen) prompt 'complete-program))))
+
 (defvar *group-undo-stack* nil)
 (defvar *group-redo-stack* nil)
 (defvar *group-stack-max-depth* 10)
