@@ -2,6 +2,15 @@
 
 (in-package :stumpwm)
 
+(defun process-live-p (p)
+  (and p (sb-ext:process-alive-p p)))
+
+(defmacro push-max-stack (stack val max-depth)
+  `(setq ,stack
+         (cons ,val
+               (if (<= ,max-depth (length ,stack))
+                   (subseq ,stack 0 (1- ,max-depth))
+                   ,stack))))
 (defvar *group-undo-stack* nil)
 (defvar *group-redo-stack* nil)
 (defvar *group-stack-max-depth* 10)
@@ -13,13 +22,6 @@
 ;; (reset-group-stacks)
 ;; (length *group-undo-stack*)
 ;; (length *group-redo-stack*)
-
-(defmacro push-max-stack (stack val max-depth)
-  `(setq ,stack
-         (cons ,val
-               (if (<= ,max-depth (length ,stack))
-                   (subseq ,stack 0 (1- ,max-depth))
-                   ,stack))))
 
 (defun push-group ()
   "Save current group placement"
@@ -102,9 +104,6 @@
   (run-shell-command "exec xscreensaver-command -lock"))
 
 (define-key *root-map* (kbd "l") "lock-screen")
-
-(defun process-live-p (p)
-  (and p (sb-ext:process-alive-p p)))
 
 (defvar *screensaver-proc* nil)
 
