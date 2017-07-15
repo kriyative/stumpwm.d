@@ -274,13 +274,6 @@
 (add-screen-mode-line-formatter #\W #'fmt-power-source)
 
 ;; startup
-(gnome-settings-daemon)
-(capslock-as-control)
-(init-mouse-pointer)
-(setup-touchpad)
-(redshift-on)
-(start-screen-saver)
-
 (setq *window-format* "%m%n%s%10t"
       *time-modeline-string* "%a %b %e %k:%M"
       *screen-mode-line-format* (concat "[%3n] "
@@ -290,7 +283,31 @@
                                         " [^B%W: %B^b]"
                                         " [^B%I^b]"
                                         " ^B%d^b")
-      *mode-line-timeout* 10)
+      *mode-line-timeout* 10
+      *message-window-gravity* :top
+      *message-window-padding* 10
+      *input-window-gravity* :top
+      *window-border-style* :thin)
+
+(set-transient-gravity :top)
+;; (set-fg-color "black")
+;; (set-bg-color "black")
+;; (set-border-color "black")
+(set-win-bg-color "white")
+(set-focus-color "red")
+(set-msg-border-width 2)
+(ql:quickload :clx-truetype)
+(xft:cache-fonts)
+(load-module "ttf-fonts")
+;; (clx-truetype:get-font-families)
+;; (clx-truetype:get-font-subfamilies "DejaVu Sans Mono")
+(set-font
+ (make-instance 'xft:font
+                :family "DejaVu Sans Mono"
+                :subfamily "Book"
+                :size 12))
+
+(add-hook *quit-hook* 'redshift-off)
 
 (defun turn-on-mode-line-timer ()
   (when (timer-p *mode-line-timer*)
@@ -301,21 +318,39 @@
 
 (toggle-mode-line (current-screen) (current-head))
 
+(defvar title-remaps nil)
+(setq title-remaps
+      '(("Gnome-terminal" . "term")
+        ("\"chromium-browser\"" . "chrom")
+        ("\"Chromium-browser\"" . "chrom")
+        ("\"chromium-browser\", \"Chromium-browser\"" . "chrom")
+        ("Conkeror" . "conk")
+        ("Firefox" . "fox")))
+
+(defun new-window-customizations (win)
+  (let ((title (cdr (assoc (window-class win) title-remaps :test 'equal))))
+    (setf (window-user-title win)
+          (or title
+              (let ((title (window-title win)))
+                (cond
+                  ((and title (< 5 (length title)))
+                   (subseq (string-downcase title) 0 5))
+
+                  (title title)
+
+                  (t "")))))))
+(add-hook *new-window-hook* 'new-window-customizations)
+
+(gnome-settings-daemon)
+(capslock-as-control)
+(shell-commands "xsetroot -bg black")
+(init-mouse-pointer)
+(setup-touchpad)
+(redshift-on)
+(start-screen-saver)
+(start-clipboard-manager)
+
 (emacs)
-(conkeror)
+;; (conkeror)
 (chromium)
-
-;; (run-shell-command "gnome-screensaver-command -a")
-
-;; (define-frame-preference
-;;     "Default"
-;;     ;; frame raise lock (lock AND raise == jumpto)
-;;     (  0     t     t    :class "Emacs24")
-;;   (    0     t     t    :class "Conkeror")
-;;   (    0     t     t    :class "Chromium-browser"))
-
-;; (gnewbg-float "flo")
-;; (define-frame-preference "flo"
-;;     ;; frame raise lock (lock AND raise == jumpto)
-;;     (  0     nil   t    :class "zoom"))
-;; (clear-window-placement-rules)
+(swank)
