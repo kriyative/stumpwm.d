@@ -11,11 +11,83 @@
                (if (<= ,max-depth (length ,stack))
                    (subseq ,stack 0 (1- ,max-depth))
                    ,stack))))
+
+(defun string-maxlen (s maxlen)
+  (let ((s1 (subseq s 0 (min maxlen (length s)))))
+    (if (string-equal s1 s)
+        s1
+        (concat s1 " ..."))))
+
 (define-stumpwm-type :shell (input prompt)
   (declare (ignore prompt))
   (let ((prompt (format nil "~A -c exec " *shell-program*)))
     (or (argument-pop-rest input)
         (completing-read (current-screen) prompt 'complete-program))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun poll-selection (&optional (selection :primary))
+  (xlib:convert-selection selection
+                          :utf8_string
+                          (screen-input-window (current-screen))
+                          :stumpwm-selection))
+
+;; (poll-selection)
+
+(defun poll-selections ()
+  (poll-selection)
+  (poll-selection :clipboard))
+
+(defun basic-get-x-selection (&optional (selection :primary))
+  (getf *x-selection* selection))
+
+;; (basic-get-x-selection)
+
+(defvar *clipboard-history* nil)
+(defvar *clipboard-history-max-length* 30)
+(defun save-selection-to-clipboard-history (sel)
+  (when (and (stringp sel)
+             (not (zerop (length sel)))
+             (not (member sel *clipboard-history* :test 'string-equal)))
+    (push-max-stack *clipboard-history* sel *clipboard-history-max-length*)))
+
+(add-hook *selection-notify-hook* 'save-selection-to-clipboard-history)
+
+(defcommand show-clipboard-history () ()
+  "Select from previously saved selections"
+  (if (null *clipboard-history*)
+      (message "No selection history")
+      (let ((sel (second
+                  (select-from-menu (current-screen)
+                                    (mapcar (lambda (s)
+                                              (list (string-maxlen s 32) s))
+                                            *clipboard-history*)
+                                    nil))))
+        (when sel
+          (set-x-selection sel :primary)
+          (set-x-selection sel :clipboard)))))
+
+(defvar *clipboard-timer* nil)
+
+(defun stop-clipboard-manager ()
+  (when (timer-p *clipboard-timer*)
+    (cancel-timer *clipboard-timer*)
+    (setq *clipboard-timer* nil)))
+
+;; (stop-clipboard-manager)
+
+(defun start-clipboard-manager ()
+  (stop-clipboard-manager)
+  (setf *clipboard-timer*
+        (run-with-timer (- 10 (mod (get-decoded-time) 10))
+                        *mode-line-timeout*
+                        'poll-selections)))
+
+;; (start-clipboard-manager)
+
+(defcommand clear-clipboard-history () ()
+  "Clear saved selections"
+  (setf *clipboard-history* nil))
 
 (defvar *group-undo-stack* nil)
 (defvar *group-redo-stack* nil)
@@ -57,6 +129,7 @@
   (pop-group))
 
 (define-key *root-map* (kbd "C-b") "frame-undo")
+(define-key *root-map* (kbd "C-y") "show-clipboard-history")
 
 (defun redo-group ()
   "Redo last undone group change"
