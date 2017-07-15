@@ -252,7 +252,7 @@
 
 (defcommand gnome-settings-daemon () ()
   "Run the gnome-settings-daemon"
-  (run-shell-command "exec gnome-settings-daemon"))
+  (run-shell-command "exec /usr/lib/gnome-settings-daemon/gsd-xsettings"))
 
 (load-module "cpu")
 (load-module "mem")
