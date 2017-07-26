@@ -385,12 +385,36 @@
       "BAT"))
 (add-screen-mode-line-formatter #\W #'fmt-power-source)
 
+(defvar *mu-cmd* "./.emacs.d/el-get/mu4e/mu/mu")
+
+(defun fmt-mail-biff (mb)
+  (declare (ignore mb))
+  (let* ((out (run-prog-collect-output *mu-cmd*
+                                       "find"
+                                       "flag:unread"
+                                       "-f" "m,f,s"
+                                       "-u"))
+         (msgs (unless (string-equal "" out)
+                 (split-string out)))
+         (cnt (length msgs)))
+    (format nil
+            (if (positive-integer-p cnt)
+                "^B^3*~A:~D^*^b"
+                "~A:~D")
+            "MU"
+            cnt)))
+
+;; (fmt-mail-biff 0)
+
+(add-screen-mode-line-formatter #\U 'fmt-mail-biff)
+
 ;; startup
 (setq *window-format* "%m%n%s%10t"
       *time-modeline-string* "%a %b %e %k:%M"
       *screen-mode-line-format* (concat "[%3n] "
                                         "^B%v^b"
                                         "^>"
+                                        " [%U]"
                                         " [^B%c^b,^B%M^b]"
                                         " [^B%W: %B^b]"
                                         " [^B%I^b]"
