@@ -430,11 +430,12 @@
 (setup-touchpad)
 (redshift-on)
 (start-screen-saver)
-(start-clipboard-manager)
 (clipboard-history:start-clipboard-manager)
 ;; (clipboard-history:stop-clipboard-manager)
 
+(run-shell-command "exec dropbox start")
+
 (emacs)
-;; (conkeror)
+(conkeror)
 (chromium)
 (swank)
