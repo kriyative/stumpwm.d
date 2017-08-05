@@ -357,17 +357,17 @@
 ;; startup
 (setq *window-format* "%m%n%s%10t"
       *time-modeline-string* "%a %b %e %k:%M"
-      *screen-mode-line-format* (concat "[%3n] "
-                                        "^B%v^b"
+      *screen-mode-line-format* (concat "%3n | "
+                                        "%v"
                                         "^>"
-                                        " [%U]"
-                                        " [^B%c^b,^B%M^b]"
-                                        " [^B%W: %B^b]"
-                                        " [^B%I^b]"
-                                        " ^B%d^b")
+                                        " | %U"
+                                        " | %c,%M"
+                                        " | %W: %B"
+                                        " | %I"
+                                        " | %d")
       *mode-line-timeout* 10
       *message-window-gravity* :top
-      *message-window-padding* 10
+      *message-window-padding* 5
       *input-window-gravity* :top
       *window-border-style* :thin)
 
