@@ -139,27 +139,29 @@
 
 (defvar *screensaver-proc* nil)
 
-(defun start-screen-saver* ()
+(defun start-screen-saver* (&optional verbosep)
   (run-shell-command "exec xset +dpms")
   (unless (process-live-p *screensaver-proc*)
-    (message "Starting screen saver...")
+    (when verbosep
+      (message "Starting screen saver..."))
     (setq *screensaver-proc*
           (run-shell-command "exec xscreensaver -no-splash"))))
 
-(defun stop-screen-saver* ()
+(defun stop-screen-saver* (&optional verbosep)
   (run-shell-command "exec xset -dpms")
   (when (process-live-p *screensaver-proc*)
-    (message "Stopping screen saver...")
+    (when verbosep
+      (message "Stopping screen saver..."))
     (run-shell-command "exec xscreensaver-command -exit")
     (setq *screensaver-proc* nil)))
 
 (defcommand start-screen-saver () ()
   "Start screen saver"
-  (start-screen-saver*))
+  (start-screen-saver* :verbose))
 
 (defcommand stop-screen-saver () ()
   "Stop screen saver"
-  (stop-screen-saver*))
+  (stop-screen-saver* :verbose))
 
 (defcommand activate-screen-saver () ()
   "Activate screen saver"
