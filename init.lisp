@@ -377,7 +377,7 @@
 ;; (set-border-color "black")
 (set-win-bg-color "white")
 (set-focus-color "red")
-(set-msg-border-width 2)
+(set-msg-border-width 1)
 (ql:quickload :clx-truetype)
 (xft:cache-fonts)
 (load-module "ttf-fonts")
@@ -394,9 +394,10 @@
 (defun turn-on-mode-line-timer ()
   (when (timer-p *mode-line-timer*)
     (cancel-timer *mode-line-timer*))
-  (setf *mode-line-timer* (run-with-timer (- 10 (mod (get-decoded-time) 10))
-                                          *mode-line-timeout*
-                                          'update-all-mode-lines)))
+  (setf *mode-line-timer*
+        (run-with-timer (- 10 (mod (get-decoded-time) 10))
+                        *mode-line-timeout*
+                        'update-all-mode-lines)))
 
 (toggle-mode-line (current-screen) (current-head))
 
