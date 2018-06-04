@@ -40,6 +40,110 @@
     (run-shell-command (format nil "set-audio-profile ~a" profile))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; simulated keys
+
+(defvar *current-key-seq* nil)
+
+(define-stump-event-handler :key-press (code state #|window|#)
+  (labels ((get-cmd (code state)
+             (with-focus (screen-key-window (current-screen))
+               (handle-keymap (top-maps) code state nil t nil))))
+    (unwind-protect
+         ;; modifiers can sneak in with a race condition. so avoid that.
+         (unless (is-modifier code)
+           (multiple-value-bind (cmd key-seq) (get-cmd code state)
+             (cond
+               ((eq cmd t))
+               (cmd
+                (unmap-message-window (current-screen))
+                (let ((*current-key-seq* key-seq))
+                  (eval-command cmd t))
+                t)
+               (t (message "~{~a ~}not bound." (mapcar 'print-key (nreverse key-seq))))))))))
+
+(defvar *simulated-key-window-class-list* nil)
+
+(defun find-simulated-key-window-class (class)
+  (first
+   (member-if (lambda (pattern)
+                (string-match class pattern))
+              *simulated-key-window-class-list*
+              :key 'car)))
+
+(defcommand send-simulated-key () ()
+  (let* ((rk (first *current-key-seq*))
+         (kmap (cdr
+                (find-simulated-key-window-class
+                 (window-class (current-window)))))
+         (k (cdr
+             (assoc (print-key rk) kmap :test 'equal))))
+    (if k
+        (progn
+          (dformat 1 "~S => ~S~%" (print-key rk) (print-key k))
+          (send-meta-key (current-screen) k))
+        (send-meta-key (current-screen) rk))))
+
+(defun make-simulated-keys (kmap)
+  (mapcar (lambda (k)
+            (let ((kcode (kbd (cdr k))))
+              (unless kcode
+                (throw 'error (format nil "Invalid keyspec: ~S" (cdr k))))
+              (cons (car k) kcode)))
+          kmap))
+
+(defun define-simulated-keys-for-window-classes (specs)
+  (setq *simulated-key-window-class-list*
+        (mapcar (lambda (spec)
+                  (let ((pattern (car spec))
+                        (kmap (cdr spec)))
+                    (cons pattern (make-simulated-keys kmap))))
+                specs))
+  (let ((keys (mapcar 'cdr
+                      (mapcan 'cddr *simulated-key-window-class-list*))))
+    (dolist (k keys)
+      (define-key *top-map* k "send-simulated-key"))))
+
+(define-simulated-keys-for-window-classes
+    '(("(Firefox|Chrome|Chromium|[Kk]eepass)"
+       ("C-n" . "Down")
+       ("C-p" . "Up")
+       ("C-f" . "Right")
+       ("C-b" . "Left")
+       ("C-v" . "Next")
+       ("M-v" . "Prior")
+       ("M-w" . "C-c")
+       ("C-w" . "C-x")
+       ("C-y" . "C-v")
+       ("M-<" . "Home")
+       ("M->" . "End")
+       ("C-M-b" . "M-Left")
+       ("C-M-f" . "M-Right"))
+      ("Chromium"
+       ("C-n" . "Down")
+       ("C-p" . "Up"))))
+
+(defcommand send-raw-key () ()
+  (message "Press a Key")
+  (let* ((k (read-key))
+         (code (car k))
+         (state (cdr k))
+         (screen (current-screen)))
+    (when (screen-current-window screen)
+      (let ((win (screen-current-window screen)))
+        (xlib:send-event (window-xwin win)
+                         :key-press (xlib:make-event-mask :key-press)
+                         :display *display*
+                         :root (screen-root (window-screen win))
+                         ;; Apparently we need these in here, though they
+                         ;; make no sense for a key event.
+                         :x 0 :y 0 :root-x 0 :root-y 0
+                         :window (window-xwin win) :event-window (window-xwin win)
+                         :code code
+                         :state state)))))
+
+(define-key *root-map* (kbd "C-q") "send-raw-key")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
