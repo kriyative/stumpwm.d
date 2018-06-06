@@ -27,9 +27,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defvar audio-profile-choices
-  '(("Built-in" "built-in")
-    ("MPow A2DP" "mpow.a2dp")
-    ("MPow Headset" "mpow.headset")))
+  '(("built-in" "built-in")
+    ("bt-a2dp" "bt-a2dp")
+    ("bt-headset" "bt-headset")
+    ("usb-headset" "usb-headset")
+    ("dp" "dp")))
 
 (defcommand set-audio-profile () ()
   "Prompt with the list of audio profiles"
@@ -38,6 +40,8 @@
                                     audio-profile-choices
                                     nil))))
     (run-shell-command (format nil "set-audio-profile ~a" profile))))
+
+(define-key *root-map* (kbd "C-a") "set-audio-profile")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; simulated keys
