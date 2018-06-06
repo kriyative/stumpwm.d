@@ -305,7 +305,7 @@
 
 (defcommand lock-screen () ()
   "Lock the screen, and power down the display"
-  ;; (run-shell-command "exec xset dpms force off")
+  (run-shell-command "exec xset dpms force off")
   (run-shell-command "exec xscreensaver-command -lock"))
 
 (define-key *root-map* (kbd "l") "lock-screen")
@@ -324,7 +324,7 @@
     ((eq :fullscreen state) (stop-screen-saver*))
     ((eq :normal state) (start-screen-saver*))))
 
-(add-hook *fullscreen-hook* 'toggle-screensaver-on-fullscreen)
+;; (add-hook *fullscreen-hook* 'toggle-screensaver-on-fullscreen)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -374,6 +374,11 @@
 (define-key *top-map* (kbd "XF86AudioPrev") "exec emacsclient -e '(emms-previous)'")
 (define-key *top-map* (kbd "XF86AudioNext") "exec emacsclient -e '(emms-next)'")
 
+(define-key *root-map* (kbd "SPC") "exec emacsclient -e '(emms-pause)'")
+(define-key *root-map* (kbd "C-o") "fnext")
+(define-key *root-map* (kbd "w") "windowlist")
+(define-key *root-map* (kbd "C-w") "windowlist")
+
 (defun change-brightness (amount)
   (run-shell-command (concat "exec xbacklight "
                              (if (< 0 amount) "-inc" "-dec")
@@ -419,6 +424,16 @@
   "Launch or raise conkeror"
   (run-or-raise "exec conkeror" '(:class "Conkeror")))
 
+(defcommand firefox () ()
+  "Launch or raise firefox"
+  (run-or-raise "exec /app/firefox/firefox" '(:class "Firefox")))
+
+(defcommand pfirefox () ()
+  "Launch or raise private mode firefox"
+  (run-shell-command
+   "exec /app/firefox/firefox -private -safe-mode -no-remote"
+   '(:class "Firefox")))
+
 (defun shell-commands (&rest commands)
   (dolist (command commands)
     (run-shell-command (concat "exec " command))))
@@ -446,7 +461,13 @@
 
 (defcommand gnome-settings-daemon () ()
   "Run the gnome-settings-daemon"
-  (run-shell-command "exec /usr/lib/gnome-settings-daemon/gsd-xsettings"))
+  (run-shell-command
+   "exec /usr/lib/gnome-settings-daemon/gsd-xsettings"))
+
+(defcommand enable-external-display () ()
+  "Enable an external display"
+  (run-shell-command
+   "exec xrandr --output eDP1 --off --output DP2-2 --auto"))
 
 (load-module "cpu")
 (load-module "mem")
@@ -454,15 +475,16 @@
 
 (load-module "battery-portable")
 (in-package :battery-portable)
-(export '(sysfs-field sysfs-field-exists? sysfs-int-field-or-nil))
+(export '(sysfs-int-field-or-nil))
 
 (in-package :stumpwm)
 
 (defun fmt-power-source (ml)
   (declare (ignore ml))
   (if (= 1
-         (battery-portable:sysfs-int-field-or-nil "/sys/class/power_supply/AC/"
-                                                  "online"))
+         (battery-portable:sysfs-int-field-or-nil
+          "/sys/class/power_supply/AC/"
+          "online"))
       "AC"
       "BAT"))
 (add-screen-mode-line-formatter #\W #'fmt-power-source)
@@ -505,14 +527,16 @@
       *message-window-gravity* :top
       *message-window-padding* 5
       *input-window-gravity* :top
-      *window-border-style* :thin)
+      *window-border-style* :thin
+      *normal-border-width* 1)
 
+(set-normal-gravity :bottom)
 (set-transient-gravity :top)
 ;; (set-fg-color "black")
 ;; (set-bg-color "black")
 ;; (set-border-color "black")
 (set-win-bg-color "white")
-(set-focus-color "red")
+(set-focus-color "green")
 (set-msg-border-width 1)
 (ql:quickload :clx-truetype)
 (xft:cache-fonts)
@@ -540,14 +564,19 @@
 (defvar title-remaps nil)
 (setq title-remaps
       '(("Gnome-terminal" . "term")
+        ("ubuntu-terminal-app" . "term")
         ("\"chromium-browser\"" . "chrom")
         ("\"Chromium-browser\"" . "chrom")
         ("\"chromium-browser\", \"Chromium-browser\"" . "chrom")
         ("Conkeror" . "conk")
-        ("Firefox" . "fox")))
+        ("Firefox" . "fox")
+        ("Emacs24" . "emacs")))
 
 (defun new-window-customizations (win)
-  (let ((title (cdr (assoc (window-class win) title-remaps :test 'equal))))
+  (let ((title (clextn:-> win
+                          window-class
+                          (assoc title-remaps :test 'equal)
+                          cdr)))
     (setf (window-user-title win)
           (or title
               (let ((title (window-title win)))
@@ -558,6 +587,7 @@
                   (title title)
 
                   (t "")))))))
+
 (add-hook *new-window-hook* 'new-window-customizations)
 
 (gnome-settings-daemon)
@@ -573,6 +603,6 @@
 (run-shell-command "exec dropbox start")
 
 (emacs)
-(conkeror)
+(firefox)
 (chromium)
 (swank)
