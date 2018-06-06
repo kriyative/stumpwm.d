@@ -172,6 +172,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defcommand emacs () ()
+  "Start emacs unless it is already running, in which case focus it."
+  (run-or-raise "exec emacs" '(:class "Emacs")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
