@@ -491,21 +491,45 @@
 
 (defvar *mu-cmd* "./.emacs.d/el-get/mu4e/mu/mu")
 
+(defun run-prog (prog &rest opts &key args output (wait t) error &allow-other-keys)
+  "Common interface to shell. Does not return anything useful."
+  (remf opts :args)
+  (remf opts :output)
+  (remf opts :wait)
+  (let ((env (sb-ext:posix-environ)))
+    (when (current-screen)
+      (setf env (cons (screen-display-string (current-screen) t)
+                      (remove-if (lambda (str)
+                                   (string= "DISPLAY=" str
+                                            :end2 (min 8 (length str))))
+                                 env))))
+    (apply #'sb-ext:run-program prog args :output (if output output t)
+           :error (if error error t) :wait wait :environment env opts)))
+
 (defun fmt-mail-biff (mb)
   (declare (ignore mb))
-  (let* ((out (run-prog-collect-output *mu-cmd*
-                                       "find"
-                                       "flag:unread"
-                                       "-f" "m,f,s"
-                                       "-u"))
+  (let* ((out (ignore-errors
+                (let ((err (make-string-output-stream)))
+                  (with-output-to-string (s)
+                    (run-prog *mu-cmd*
+                              :args '("find"
+                                      "flag:unread"
+                                      "-f" "m,f,s"
+                                      "-u")
+                              :error err
+                              :output s
+                              :wait t)))))
          (msgs (unless (string-equal "" out)
                  (split-string out)))
-         (cnt (length msgs)))
+         (msgs1 (remove-if (lambda (msg)
+                             (cl-ppcre:scan "All Mail" msg))
+                           msgs))
+         (cnt (length msgs1)))
     (format nil
             (if (positive-integer-p cnt)
                 "^B^3*~A:~D^*^b"
                 "~A:~D")
-            "MU"
+            "mu"
             cnt)))
 
 ;; (fmt-mail-biff 0)
