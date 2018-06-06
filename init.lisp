@@ -91,20 +91,34 @@
          (kmap (cdr
                 (find-simulated-key-window-class
                  (window-class (current-window)))))
-         (k (cdr
-             (assoc (print-key rk) kmap :test 'equal))))
-    (if k
-        (progn
-          (dformat 1 "~S => ~S~%" (print-key rk) (print-key k))
+         (keys (cdr
+                (assoc (print-key rk) kmap :test 'equal))))
+    (dformat 1 "~s ~s ~s~%"
+             (window-class (current-window))
+             (print-key rk)
+             (when keys
+               (mapcar 'print-key keys)))
+
+    (if keys
+        (dolist (k keys)
+          ;; fixme: the following might work better in popup-windows
+          ;; etc.
+          ;; (xwin-send-fake-key (screen-root (current-screen))
+          ;;                     (screen-key-window (current-screen))
+          ;;                     k)
           (send-meta-key (current-screen) k))
         (send-meta-key (current-screen) rk))))
 
 (defun make-simulated-keys (kmap)
   (mapcar (lambda (k)
-            (let ((kcode (kbd (cdr k))))
-              (unless kcode
-                (throw 'error (format nil "Invalid keyspec: ~S" (cdr k))))
-              (cons (car k) kcode)))
+            (let ((kcodes (mapcar (lambda (key)
+                                    (or (kbd key)
+                                        (throw 'error
+                                          (format nil "Invalid keyspec: ~S" key))))
+                                  (if (consp (cdr k))
+                                      (cdr k)
+                                      (list (cdr k))))))
+              (cons (car k) kcodes)))
           kmap))
 
 (defun define-simulated-keys-for-window-classes (specs)
@@ -114,32 +128,29 @@
                         (kmap (cdr spec)))
                     (cons pattern (make-simulated-keys kmap))))
                 specs))
-  (let ((keys (mapcar 'cdr
-                      (mapcan 'cddr *simulated-key-window-class-list*))))
+  (let ((keys (mapcar 'car
+                      (mapcan 'cdr *simulated-key-window-class-list*))))
     (dolist (k keys)
-      (define-key *top-map* k "send-simulated-key"))))
+      (define-key *top-map* (kbd k) "send-simulated-key"))))
 
 (define-simulated-keys-for-window-classes
     '(("(Firefox|Chrome|Chromium|[Kk]eepass)"
-       ("C-n" . "Down")
-       ("C-p" . "Up")
-       ("C-f" . "Right")
-       ("C-b" . "Left")
-       ("C-v" . "Next")
-       ("M-v" . "Prior")
-       ("M-w" . "C-c")
-       ("C-w" . "C-x")
-       ("C-y" . "C-v")
-       ("M-<" . "Home")
-       ("M->" . "End")
+       ("C-n"   . "Down")
+       ("C-p"   . "Up")
+       ("C-f"   . "Right")
+       ("C-b"   . "Left")
+       ("C-v"   . "Next")
+       ("M-v"   . "Prior")
+       ("M-w"   . "C-c")
+       ("C-w"   . "C-x")
+       ("C-y"   . "C-v")
+       ("M-<"   . "Home")
+       ("M->"   . "End")
        ("C-M-b" . "M-Left")
-       ("C-M-f" . "M-Right"))
-      ("Chromium"
-       ("C-n" . "Down")
-       ("C-p" . "Up"))))
+       ("C-M-f" . "M-Right")
+       ("C-k"   . ("C-S-End" "C-x")))))
 
 (defcommand send-raw-key () ()
-  (message "Press a Key")
   (let* ((k (read-key))
          (code (car k))
          (state (cdr k))
