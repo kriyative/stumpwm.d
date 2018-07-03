@@ -51,7 +51,8 @@
                   (select-from-menu (current-screen)
                                     audio-profile-choices
                                     nil))))
-    (run-shell-command (format nil "set-audio-profile ~a" profile))))
+    (when profile
+      (run-shell-command (format nil "set-audio-profile ~a" profile)))))
 
 (define-key *root-map* (kbd "C-a") "set-audio-profile")
 
