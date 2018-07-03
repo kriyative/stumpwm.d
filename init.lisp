@@ -554,24 +554,25 @@
 (setq title-remaps
       '(("Gnome-terminal" . "term")
         ("ubuntu-terminal-app" . "term")
-        ("\"chromium-browser\"" . "chrom")
-        ("\"Chromium-browser\"" . "chrom")
-        ("\"chromium-browser\", \"Chromium-browser\"" . "chrom")
+        ("\"chromium-browser\"" . "chromium")
+        ("\"Chromium-browser\"" . "chromium")
+        ("\"chromium-browser\", \"Chromium-browser\"" . "chrome")
         ("Conkeror" . "conk")
         ("Firefox" . "fox")
         ("Emacs24" . "emacs")))
 
 (defun new-window-customizations (win)
-  (let ((title (clextn:-> win
-                          window-class
-                          (assoc title-remaps :test 'equal)
-                          cdr)))
+  (let ((title-max-len 10)
+        (title (cdr
+                (assoc (window-class win)
+                       title-remaps
+                       :test 'equal))))
     (setf (window-user-title win)
           (or title
               (let ((title (window-title win)))
                 (cond
-                  ((and title (< 5 (length title)))
-                   (subseq (string-downcase title) 0 5))
+                  ((and title (< title-max-len (length title)))
+                   (subseq (string-downcase title) 0 title-max-len))
 
                   (title title)
 
