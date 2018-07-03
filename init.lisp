@@ -57,84 +57,8 @@
 (define-key *root-map* (kbd "C-a") "set-audio-profile")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; simulated keys
 
-(defvar *current-key-seq* nil)
-
-(define-stump-event-handler :key-press (code state #|window|#)
-  (labels ((get-cmd (code state)
-             (with-focus (screen-key-window (current-screen))
-               (handle-keymap (top-maps) code state nil t nil))))
-    (unwind-protect
-         ;; modifiers can sneak in with a race condition. so avoid that.
-         (unless (is-modifier code)
-           (multiple-value-bind (cmd key-seq) (get-cmd code state)
-             (cond
-               ((eq cmd t))
-               (cmd
-                (unmap-message-window (current-screen))
-                (let ((*current-key-seq* key-seq))
-                  (eval-command cmd t))
-                t)
-               (t (message "~{~a ~}not bound." (mapcar 'print-key (nreverse key-seq))))))))))
-
-(defvar *simulated-key-window-class-list* nil)
-
-(defun find-simulated-key-window-class (class)
-  (first
-   (member-if (lambda (pattern)
-                (string-match class pattern))
-              *simulated-key-window-class-list*
-              :key 'car)))
-
-(defcommand send-simulated-key () ()
-  (let* ((rk (first *current-key-seq*))
-         (kmap (cdr
-                (find-simulated-key-window-class
-                 (window-class (current-window)))))
-         (keys (cdr
-                (assoc (print-key rk) kmap :test 'equal))))
-    (dformat 1 "~s ~s ~s~%"
-             (window-class (current-window))
-             (print-key rk)
-             (when keys
-               (mapcar 'print-key keys)))
-
-    (if keys
-        (dolist (k keys)
-          ;; fixme: the following might work better in popup-windows
-          ;; etc.
-          ;; (xwin-send-fake-key (screen-root (current-screen))
-          ;;                     (screen-key-window (current-screen))
-          ;;                     k)
-          (send-meta-key (current-screen) k))
-        (send-meta-key (current-screen) rk))))
-
-(defun make-simulated-keys (kmap)
-  (mapcar (lambda (k)
-            (let ((kcodes (mapcar (lambda (key)
-                                    (or (kbd key)
-                                        (throw 'error
-                                          (format nil "Invalid keyspec: ~S" key))))
-                                  (if (consp (cdr k))
-                                      (cdr k)
-                                      (list (cdr k))))))
-              (cons (car k) kcodes)))
-          kmap))
-
-(defun define-simulated-keys-for-window-classes (specs)
-  (setq *simulated-key-window-class-list*
-        (mapcar (lambda (spec)
-                  (let ((pattern (car spec))
-                        (kmap (cdr spec)))
-                    (cons pattern (make-simulated-keys kmap))))
-                specs))
-  (let ((keys (mapcar 'car
-                      (mapcan 'cdr *simulated-key-window-class-list*))))
-    (dolist (k keys)
-      (define-key *top-map* (kbd k) "send-simulated-key"))))
-
-(define-simulated-keys-for-window-classes
+(define-remapped-keys
     '(("(Firefox|Chrome|Chromium|[Kk]eepass)"
        ("C-n"   . "Down")
        ("C-p"   . "Up")
@@ -149,25 +73,7 @@
        ("M->"   . "End")
        ("C-M-b" . "M-Left")
        ("C-M-f" . "M-Right")
-       ("C-k"   . ("C-S-End" "C-x")))))
-
-(defcommand send-raw-key () ()
-  (let* ((k (read-key))
-         (code (car k))
-         (state (cdr k))
-         (screen (current-screen)))
-    (when (screen-current-window screen)
-      (let ((win (screen-current-window screen)))
-        (xlib:send-event (window-xwin win)
-                         :key-press (xlib:make-event-mask :key-press)
-                         :display *display*
-                         :root (screen-root (window-screen win))
-                         ;; Apparently we need these in here, though they
-                         ;; make no sense for a key event.
-                         :x 0 :y 0 :root-x 0 :root-y 0
-                         :window (window-xwin win) :event-window (window-xwin win)
-                         :code code
-                         :state state)))))
+       ("C-k"   . ("S-End" "C-x")))))
 
 (define-key *root-map* (kbd "C-q") "send-raw-key")
 
