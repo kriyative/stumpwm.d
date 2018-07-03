@@ -494,30 +494,32 @@
 (add-screen-mode-line-formatter #\U 'fmt-mail-biff)
 
 ;; startup
-(setq *window-format* "%m%n%s%10t"
-      *time-modeline-string* "%a %b %e %k:%M"
-      *screen-mode-line-format* (concat "%3n | "
-                                        "%v"
-                                        "^>"
-                                        " | %U"
-                                        " | %c,%M"
-                                        " | %W: %B"
-                                        " | %I"
-                                        " | %d")
-      *mode-line-timeout* 10
-      *message-window-gravity* :top
-      *message-window-padding* 5
-      *input-window-gravity* :top
-      *window-border-style* :thin
-      *normal-border-width* 1)
+(progn
+  (setq *window-format* "%m%n%s%10t"
+        *time-modeline-string* "%a %b %e %k:%M"
+        *screen-mode-line-format* (concat "%3n | "
+                                          "%v"
+                                          "^>"
+                                          " | %U"
+                                          " | %c,%M"
+                                          " | %W: %B"
+                                          " | %I"
+                                          " | %d")
+        *mode-line-timeout* 10
+        *message-window-gravity* :top
+        *message-window-padding* 5
+        *input-window-gravity* :top
+        *window-border-style* :thin
+        *normal-border-width* 1)
+  (sync-all-frame-windows (current-group)))
 
 (set-normal-gravity :bottom)
 (set-transient-gravity :top)
-;; (set-fg-color "black")
-;; (set-bg-color "black")
+(set-fg-color "white")
+(set-bg-color "black")
 ;; (set-border-color "black")
 (set-win-bg-color "white")
-(set-focus-color "green")
+(set-focus-color "black")
 (set-msg-border-width 1)
 (ql:quickload :clx-truetype)
 (xft:cache-fonts)
@@ -582,6 +584,7 @@
 ;; (clipboard-history:stop-clipboard-manager)
 
 (run-shell-command "exec dropbox start")
+(run-shell-command "exec compton -b")
 
 (emacs)
 (firefox)
