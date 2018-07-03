@@ -148,6 +148,8 @@
 
 (define-key *root-map* (kbd "C-f") "frame-redo")
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun resize-width-pct (pct)
   (let* ((swidth (screen-width (current-screen)))
          (twidth (round (* pct swidth)))
@@ -166,6 +168,14 @@
   "Resize width of current frame to 66% of screen-width"
   (resize-width-pct 0.66))
 
+(defcommand resize-75%-width () ()
+  "Resize width of current frame to 75% of screen-width"
+  (resize-width-pct 0.75))
+
+(defcommand (fprev tile-group) () ()
+  "Cycle through the frame tree to the next frame."
+  (focus-prev-frame (current-group)))
+
 (defvar ctlx-map (make-sparse-keymap))
 (define-key ctlx-map (kbd "0") "remove")
 (define-key ctlx-map (kbd "1") "only")
@@ -173,10 +183,16 @@
 (define-key ctlx-map (kbd "3") "hsplit")
 (define-key ctlx-map (kbd "6") "resize-66%-width")
 (define-key ctlx-map (kbd "7") "resize-33%-width")
+(define-key ctlx-map (kbd "8") "resize-75%-width")
 (define-key ctlx-map (kbd "+") "balance-frames")
 (define-key ctlx-map (kbd "C-y") "show-clipboard-history")
+(define-key ctlx-map (kbd "p") "fprev")
+(define-key ctlx-map (kbd "n") "fnext")
 
 (define-key *root-map* (kbd "C-x") 'ctlx-map)
+
+(define-key *root-map* (kbd "p") "fprev")
+(define-key *root-map* (kbd "n") "fnext")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
