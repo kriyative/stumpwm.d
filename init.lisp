@@ -229,9 +229,11 @@
 (defcommand lock-screen () ()
   "Lock the screen, and power down the display"
   (run-shell-command "exec xset dpms force off")
+  (sleep 1)
   (run-shell-command "exec xscreensaver-command -lock"))
 
-(define-key *root-map* (kbd "l") "lock-screen")
+(define-key *top-map* (kbd "s-Pause") "lock-screen")
+(define-key *top-map* (kbd "s-F9") "lock-screen")
 
 (defcommand suspend () ()
   "Suspend the system"
