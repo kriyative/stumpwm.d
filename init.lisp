@@ -289,8 +289,9 @@
 (in-package :amixer)
 (defvolcontrol amixer-Master-10- "Master" "10%-")
 (defvolcontrol amixer-Master-10+ "Master" "10%+")
-
 (in-package :stumpwm)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; ;; load Swank so we can connect with SLIME
 (load ".emacs.d/el-get/slime/swank-loader.lisp")
@@ -314,7 +315,7 @@
 
 (defcommand term () ()
   "Launch or raise a terminal window"
-  (run-or-pull "exec gnome-terminal" '(:class "Gnome-terminal")))
+  (run-or-pull "exec urxvt" '(:class "URxvt")))
 
 (define-key *root-map* (kbd "c") "term")
 
@@ -377,10 +378,6 @@
   "Launch or raise chromium"
   (run-or-raise "exec chromium-browser" '(:class "Chromium-browser")))
 
-(defcommand conkeror () ()
-  "Launch or raise conkeror"
-  (run-or-raise "exec conkeror" '(:class "Conkeror")))
-
 (defcommand firefox () ()
   "Launch or raise firefox"
   (run-or-raise "exec /app/firefox/firefox" '(:class "Firefox")))
@@ -425,6 +422,9 @@
   "Enable an external display"
   (run-shell-command
    "exec xrandr --output eDP1 --off --output DP2-2 --auto"))
+
+(defcommand internal-display () ()
+  (run-prog-collect-output "/bin/sh" "-c" "xrandr --output eDP1 --mode 1920x1080 --output DP2-2 --off"))
 
 (load-module "cpu")
 (load-module "mem")
