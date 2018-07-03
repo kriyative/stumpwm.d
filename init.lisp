@@ -241,15 +241,47 @@
 
 (define-key *root-map* (kbd "z") "suspend")
 
-;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defvar *after-funs* nil)
+(defmacro defafter (fname arglist &body body)
+  `(let ((fdef (symbol-function (quote ,fname))))
+     (push (cons (quote ,fname) fdef) *after-funs*)
+     (defun ,fname (&rest args)
+       (labels ((call-next-function (&rest args)
+                  (apply fdef args)))
+         (destructuring-bind ,arglist
+             args
+           ,@body)))))
+
+(defun reset-defafter (fsym)
+  (setf (symbol-function fsym) (cdr (assoc fsym *after-funs*))))
+
+;; (reset-defafter 'activate-fullscreen)
+;; (reset-defafter 'deactivate-fullscreen)
+
+(defvar *fullscreen-hook* nil)
+
+(defun apply-hook (hook &rest args)
+  (when hook
+    (dolist (fn hook)
+      (apply fn args))))
+
+(defafter activate-fullscreen (window)
+  (call-next-function window)
+  (apply-hook *fullscreen-hook* window :fullscreen))
+
+(defafter deactivate-fullscreen (window)
+  (call-next-function window)
+  (apply-hook *fullscreen-hook* window :normal))
 
 (defun toggle-screensaver-on-fullscreen (window state)
   (declare (ignore window))
   (cond
-    ((eq :fullscreen state) (stop-screen-saver*))
-    ((eq :normal state) (start-screen-saver*))))
+    ((eq :fullscreen state) (stop-screen-saver* :verbose))
+    ((eq :normal state) (start-screen-saver* :verbose))))
 
-;; (add-hook *fullscreen-hook* 'toggle-screensaver-on-fullscreen)
+(add-hook *fullscreen-hook* 'toggle-screensaver-on-fullscreen)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
