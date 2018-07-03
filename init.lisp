@@ -544,6 +544,12 @@
 
 (toggle-mode-line (current-screen) (current-head))
 
+;; set window-class property of mode-lines - used by compton
+(dolist (m *mode-lines*)
+  (xlib:set-wm-class (mode-line-window m)
+                     "StumpwmModeline"
+                     "stumpwm-modeline"))
+
 (defvar title-remaps nil)
 (setq title-remaps
       '(("Gnome-terminal" . "term")
