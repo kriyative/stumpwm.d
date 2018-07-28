@@ -323,18 +323,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defcommand audio-pause () ()
+  (run-shell-command "exec emacsclient -e '(emms-pause)'"))
+(defcommand audio-stop () ()
+  (run-shell-command "exec emacsclient -e '(emms-stop)'"))
+(defcommand audio-previous () ()
+  (run-shell-command "exec emacsclient -e '(emms-previous)'"))
+(defcommand audio-next () ()
+  (run-shell-command "exec emacsclient -e '(emms-next)'"))
+
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-10- pulse")
 (define-key *top-map* (kbd "XF86AudioRaiseVolume") "amixer-Master-10+ pulse")
 (define-key *top-map* (kbd "S-XF86AudioLowerVolume") "amixer-Master-1- pulse")
 (define-key *top-map* (kbd "S-XF86AudioRaiseVolume") "amixer-Master-1+ pulse")
 (define-key *top-map* (kbd "XF86AudioMute") "amixer-Master-toggle pulse")
 
-(define-key *top-map* (kbd "XF86AudioPlay") "exec emacsclient -e '(emms-pause)'")
-(define-key *top-map* (kbd "XF86AudioStop") "exec emacsclient -e '(emms-stop)'")
-(define-key *top-map* (kbd "XF86AudioPrev") "exec emacsclient -e '(emms-previous)'")
-(define-key *top-map* (kbd "XF86AudioNext") "exec emacsclient -e '(emms-next)'")
+(define-key *top-map* (kbd "XF86AudioPlay") "audio-pause")
+(define-key *top-map* (kbd "XF86AudioStop") "audio-stop")
+(define-key *top-map* (kbd "XF86AudioPrev") "audio-previous")
+(define-key *top-map* (kbd "XF86AudioNext") "audio-next")
 
-(define-key *root-map* (kbd "SPC") "exec emacsclient -e '(emms-pause)'")
+(define-key *root-map* (kbd "SPC") "audio-pause")
 (define-key *root-map* (kbd "C-o") "fnext")
 (define-key *root-map* (kbd "w") "windowlist")
 (define-key *root-map* (kbd "C-w") "windowlist")
