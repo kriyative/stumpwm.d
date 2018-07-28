@@ -348,29 +348,25 @@
 (define-key *root-map* (kbd "w") "windowlist")
 (define-key *root-map* (kbd "C-w") "windowlist")
 
-(defun change-brightness (amount)
-  (run-shell-command (concat "exec xbacklight "
-                             (if (< 0 amount) "-inc" "-dec")
-                             " "
-                             (prin1-to-string (abs amount))))
+(defun get-brightness ()
   (let* ((*read-eval* nil)
-         (current (read-from-string (run-shell-command "exec xbacklight -get" t)))
-         (percent (truncate current)))
+         (current (read-from-string
+                   (run-shell-command "exec xbacklight -get" t))))
+    (round current)))
+
+(defcommand change-brightness (amount) ((:number "Amount: "))
+  (let* ((cur (get-brightness))
+         (next (min 100 (max 0 (+ cur amount)))))
+    (run-shell-command (format nil "exec xbacklight -set ~a" next))
     (message
      (concat "Brightness: "
-             (format nil "~C^B~A%" #\Newline percent)
-             (bar percent 50 #\# #\:) "^]]"))))
+             (format nil "~C^B~A%" #\Newline next)
+             (bar next 50 #\# #\:) "^]]"))))
 
-(defcommand lower-brightness () ()
-  "Lower the brightness"
-  (change-brightness -1.0))
-
-(defcommand raise-brightness () ()
-  "Raise the brightness"
-  (change-brightness 1))
-
-(define-key *top-map* (kbd "XF86MonBrightnessUp") "raise-brightness")
-(define-key *top-map* (kbd "XF86MonBrightnessDown") "lower-brightness")
+(define-key *top-map* (kbd "XF86MonBrightnessUp") "change-brightness 10")
+(define-key *top-map* (kbd "XF86MonBrightnessDown") "change-brightness -10")
+(define-key *top-map* (kbd "S-XF86MonBrightnessUp") "change-brightness 1")
+(define-key *top-map* (kbd "S-XF86MonBrightnessDown") "change-brightness -1")
 
 (defvar *redshift-proc* nil)
 
