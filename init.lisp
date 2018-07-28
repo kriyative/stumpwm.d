@@ -60,6 +60,8 @@
 
 (define-remapped-keys
     '(("(Firefox|Chrome|Chromium|[Kk]eepass)"
+       ("C-a"   . "Home")
+       ("C-e"   . "End")
        ("C-n"   . "Down")
        ("C-p"   . "Up")
        ("C-f"   . "Right")
@@ -69,8 +71,8 @@
        ("M-w"   . "C-c")
        ("C-w"   . "C-x")
        ("C-y"   . "C-v")
-       ("M-<"   . "Home")
-       ("M->"   . "End")
+       ("M-<"   . "C-Home")
+       ("M->"   . "C-End")
        ("C-M-b" . "M-Left")
        ("C-M-f" . "M-Right")
        ("C-k"   . ("S-End" "C-x")))))
