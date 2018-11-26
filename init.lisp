@@ -66,30 +66,7 @@
     (when profile
       (sh "set-audio-profile" profile))))
 
-(define-key *root-map* (kbd "C-a") "set-audio-profile")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-remapped-keys
-    '(("(Firefox|Chrome|Chromium|[Kk]eepass)"
-       ("C-a"   . "Home")
-       ("C-e"   . "End")
-       ("C-n"   . "Down")
-       ("C-p"   . "Up")
-       ("C-f"   . "Right")
-       ("C-b"   . "Left")
-       ("C-v"   . "Next")
-       ("M-v"   . "Prior")
-       ("M-w"   . "C-c")
-       ("C-w"   . "C-x")
-       ("C-y"   . "C-v")
-       ("M-<"   . "C-Home")
-       ("M->"   . "C-End")
-       ("C-M-b" . "M-Left")
-       ("C-M-f" . "M-Right")
-       ("C-k"   . ("S-End" "C-x")))))
-
-(define-key *root-map* (kbd "C-q") "send-raw-key")
+;; (define-key *root-map* (kbd "C-a") "set-audio-profile")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -143,9 +120,6 @@
   "Undo frame changes"
   (pop-group))
 
-(define-key *root-map* (kbd "C-b") "frame-undo")
-(define-key *root-map* (kbd "C-y") "show-clipboard-history")
-
 (defun redo-group ()
   "Redo last undone group change"
   (let ((gdump (pop *group-redo-stack*)))
@@ -159,8 +133,6 @@
 (defcommand frame-redo () ()
   "Redo recently undone frame changes"
   (redo-group))
-
-(define-key *root-map* (kbd "C-f") "frame-redo")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -189,24 +161,6 @@
 (defcommand (fprev tile-group) () ()
   "Cycle through the frame tree to the next frame."
   (focus-prev-frame (current-group)))
-
-(defvar ctlx-map (make-sparse-keymap))
-(define-key ctlx-map (kbd "0") "remove")
-(define-key ctlx-map (kbd "1") "only")
-(define-key ctlx-map (kbd "2") "vsplit")
-(define-key ctlx-map (kbd "3") "hsplit")
-(define-key ctlx-map (kbd "6") "resize-66%-width")
-(define-key ctlx-map (kbd "7") "resize-33%-width")
-(define-key ctlx-map (kbd "8") "resize-75%-width")
-(define-key ctlx-map (kbd "+") "balance-frames")
-(define-key ctlx-map (kbd "C-y") "show-clipboard-history")
-(define-key ctlx-map (kbd "p") "fprev")
-(define-key ctlx-map (kbd "n") "fnext")
-
-(define-key *root-map* (kbd "C-x") 'ctlx-map)
-
-(define-key *root-map* (kbd "p") "fprev")
-(define-key *root-map* (kbd "n") "fnext")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -328,8 +282,6 @@
   "Launch or raise a terminal window"
   (run-or-pull "exec urxvt" '(:class "URxvt")))
 
-(define-key *root-map* (kbd "c") "term")
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defcommand audio-pause () ()
@@ -339,22 +291,6 @@
 (defcommand audio-previous () ()
   (sh "emacsclient" "-e" "(emms-previous)"))
 (defcommand audio-next () ()
-
-(define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-10- pulse")
-(define-key *top-map* (kbd "XF86AudioRaiseVolume") "amixer-Master-10+ pulse")
-(define-key *top-map* (kbd "S-XF86AudioLowerVolume") "amixer-Master-1- pulse")
-(define-key *top-map* (kbd "S-XF86AudioRaiseVolume") "amixer-Master-1+ pulse")
-(define-key *top-map* (kbd "XF86AudioMute") "amixer-Master-toggle pulse")
-
-(define-key *top-map* (kbd "XF86AudioPlay") "audio-pause")
-(define-key *top-map* (kbd "XF86AudioStop") "audio-stop")
-(define-key *top-map* (kbd "XF86AudioPrev") "audio-previous")
-(define-key *top-map* (kbd "XF86AudioNext") "audio-next")
-
-(define-key *root-map* (kbd "SPC") "audio-pause")
-(define-key *root-map* (kbd "C-o") "fnext")
-(define-key *root-map* (kbd "w") "windowlist")
-(define-key *root-map* (kbd "C-w") "windowlist")
   (sh "emacsclient" "-e" "(emms-next)"))
 
 (defun get-brightness ()
@@ -371,11 +307,6 @@
      (concat "Brightness: "
              (format nil "~C^B~A%" #\Newline next)
              (bar next 50 #\# #\:) "^]]"))))
-
-(define-key *top-map* (kbd "XF86MonBrightnessUp") "change-brightness 10")
-(define-key *top-map* (kbd "XF86MonBrightnessDown") "change-brightness -10")
-(define-key *top-map* (kbd "S-XF86MonBrightnessUp") "change-brightness 1")
-(define-key *top-map* (kbd "S-XF86MonBrightnessDown") "change-brightness -1")
 
 (defvar *redshift-proc* nil)
 
@@ -605,20 +536,168 @@
 
 (add-hook *new-window-hook* 'new-window-customizations)
 
-(gnome-settings-daemon)
-(capslock-as-control)
-(shell-commands "xsetroot -bg black")
-(init-mouse-pointer)
-(setup-touchpad)
-(redshift-on)
-(start-screen-saver)
-(clipboard-history:start-clipboard-manager)
-;; (clipboard-history:stop-clipboard-manager)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(run-shell-command "exec dropbox start")
-(run-shell-command "exec compton -b")
+(define-remapped-keys
+    '(("(.*[Cc]hrom|[Ff]irefox|[Ee]vince|keepassxc)"
+       ("C-a"   . "Home")
+       ("C-e"   . "End")
+       ("C-n"   . "Down")
+       ("C-p"   . "Up")
+       ("C-f"   . "Right")
+       ("C-b"   . "Left")
+       ("C-v"   . "Next")
+       ("M-b"   . "C-Left")
+       ("M-f"   . "C-Right")
+       ("M-v"   . "Prior")
+       ("M-w"   . "C-c")
+       ("C-w"   . "C-x")
+       ("C-y"   . "C-v")
+       ("M-<"   . "C-Home")
+       ("M->"   . "C-End")
+       ("C-M-b" . "M-Left")
+       ("C-M-f" . "M-Right")
+       ("C-k"   . ("S-End" "C-x"))
+       ("M-k"   . "C-k")
+       ("C-d"   . "Delete"))))
 
-(emacs)
-(firefox)
-(chromium)
+(defun bind-keys (keymap keydefs)
+  (dolist (keydef keydefs)
+    (destructuring-bind (keyseq command)
+        keydef
+      (define-key keymap (kbd keyseq) command))))
+
+(bind-keys
+ *top-map*
+ '(("s-!" "exec")
+   ("s-&" "exec")
+   ("s-+" "balance-frames")
+   ("s--" "remove")
+   ("s-:" "eval")
+   ("s-;" "colon")
+   ;; ("s-a" "ratclick 1")
+   ;; ("s-s" "ratclick 2")
+   ("s-Q" "only")
+   ("s-`" "only")
+   ("s-S" "hsplit")
+   ("s-h" "hsplit")
+   ("s-d" "remove")
+   ("s-\\" "hsplit")
+   ("s-k" "delete")
+   ("s-l" "lock-screen")
+   ("s-n" "fnext")
+   ("s-o" "fother")
+   ("s-p" "fprev")
+   ("s-q" "send-raw-key")
+   ("s-r" "remove")
+   ("s-s" "vsplit")
+   ("s-u" "frame-undo")
+   ("s-w" "windowlist")
+   ("s-x" "colon")
+   ("s-y" "show-clipboard-history")
+   ("s-SPC" "audio-pause")
+   ("XF86AudioLowerVolume" "amixer-Master-10- pulse")
+   ("S-XF86AudioLowerVolume" "amixer-Master-1- pulse")
+   ("XF86AudioRaiseVolume" "amixer-Master-10+ pulse")
+   ("S-XF86AudioRaiseVolume" "amixer-Master-1+ pulse")
+   ("XF86AudioMute" "amixer-Master-toggle pulse")
+   ("XF86AudioPlay" "audio-pause")
+   ("XF86AudioStop" "audio-stop")
+   ("XF86AudioPrev" "audio-previous")
+   ("XF86AudioNext" "audio-next")
+   ("XF86MonBrightnessUp" "change-brightness 10")
+   ("S-XF86MonBrightnessUp" "change-brightness 1")
+   ("XF86MonBrightnessDown" "change-brightness -10")
+   ("S-XF86MonBrightnessDown" "change-brightness -1")
+
+   ("s-Left" "ratrelwarp -10 0")
+   ("s-Right" "ratrelwarp 10 0")
+   ("s-Up" "ratrelwarp 0 -10")
+   ("s-Down" "ratrelwarp 0 10")
+   ("s-F9" "lock-screen")
+   ("s-Pause" "audio-pause")))
+
+(bind-keys
+ *top-map*
+ (loop for i from 0 to 9
+    collect (list
+             (format nil "s-~d" i)
+             (format nil "select-window-by-number ~d" i))))
+(bind-keys
+ *top-map*
+ (loop for i from 0 to 9
+    collect (list
+             (format nil "s-C-~d" i)
+             (format nil "pull ~d" i))))
+
+(defvar *audio-map* (make-sparse-keymap))
+(bind-keys
+ *audio-map*
+ '(("n" "audio-next")
+   ("p" "audio-previous")
+   ("d" "set-audio-profile")
+   ("C-d" "set-audio-profile")
+   ("SPC" "audio-pause")))
+
+(defvar *ctlx-map* (make-sparse-keymap))
+(bind-keys
+ *ctlx-map*
+ '(("0" "remove")
+   ("1" "only")
+   ("2" "vsplit")
+   ("3" "hsplit")
+   ("6" "resize-66%-width")
+   ("7" "resize-33%-width")
+   ("8" "resize-75%-width")
+   ("+" "balance-frames")
+   ("C-y" "show-clipboard-history")
+   ("p" "fprev")
+   ("n" "fnext")))
+
+(bind-keys
+ *root-map*
+ '(("C-q" "send-raw-key")
+   ("SPC" "audio-pause")
+   ("C-o" "fother")
+   ("w" "windowlist")
+   ("C-w" "windowlist")
+   ("C-a" *audio-map*)
+   ("C-b" "frame-undo")
+   ("C-y" "show-clipboard-history")
+   ("C-f" "frame-redo")
+   ("C-x" *ctlx-map*)
+   ("p" "fprev")
+   ("n" "fnext")
+   ("z" "suspend")
+   ("c" "term")))
+
+;; (setq *debug-level* 0)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun default-startup ()
+  (gnome-settings-daemon)
+  (capslock-as-control)
+  ;; (capslock-as-hyper)
+  (sh "xsetroot" "-bg" "black")
+  (init-mouse-pointer)
+  (setup-touchpad)
+  (redshift-on)
+  (start-screen-saver)
+  (clipboard-history:start-clipboard-manager)
+  ;; (clipboard-history:stop-clipboard-manager)
+
+  (sh "dropbox" "start")
+  ;; (sh "compton" "-b")
+  ;; (sh "xwrits" "+breakclock" "typetime=27" "breaktime=3")
+
+  (sb-posix:putenv
+   (format nil "EMACS_SERVER_FILE=~a/.emacs.d/server/server"
+           (sb-posix:getenv "HOME")))
+  (emacs)
+  (firefox)
+  (chromium)
+  )
+
 (swank)
+(default-startup)
