@@ -416,6 +416,7 @@
                                    (string= "DISPLAY=" str
                                             :end2 (min 8 (length str))))
                                  env))))
+    (sb-posix:putenv "_JAVA_AWT_WM_NONREPARENTING=1")
     (apply #'sb-ext:run-program prog args :output (if output output t)
            :error (if error error t) :wait wait :environment env opts)))
 
@@ -455,13 +456,16 @@
         *time-modeline-string* "%a %b %e %k:%M"
         *screen-mode-line-format* (concat "%3n | "
                                           "%v"
+					  ;; "^B%v^b"
                                           "^>"
-                                          " | %U"
+                                          " %U"
                                           " | %c,%M"
                                           " | %W: %B"
                                           " | %I"
                                           " | %d")
+        *hidden-window-color* "^7*"
         *mode-line-timeout* 10
+        *mode-line-position* :top
         *message-window-gravity* :top
         *message-window-padding* 5
         *input-window-gravity* :top
@@ -510,12 +514,14 @@
 (setq title-remaps
       '(("Gnome-terminal" . "term")
         ("ubuntu-terminal-app" . "term")
-        ("\"chromium-browser\"" . "chromium")
-        ("\"Chromium-browser\"" . "chromium")
-        ("\"chromium-browser\", \"Chromium-browser\"" . "chrome")
+        ("urxvt" . "term")
+        ("Chromium-browser" . "chromi")
+        ("Google-chrome" . "gchrom")
         ("Conkeror" . "conk")
         ("Firefox" . "fox")
-        ("Emacs24" . "emacs")))
+        ("Emacs26" . "emacs")
+        ("Emacs" . "emacs")
+        ("keepassxc" . "kpass")))
 
 (defun new-window-customizations (win)
   (let ((title-max-len 10)
