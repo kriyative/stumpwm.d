@@ -64,7 +64,7 @@
                                     audio-profile-choices
                                     nil))))
     (when profile
-      (run-shell-command (format nil "set-audio-profile ~a" profile)))))
+      (sh "set-audio-profile" profile))))
 
 (define-key *root-map* (kbd "C-a") "set-audio-profile")
 
@@ -213,19 +213,19 @@
 (defvar *screensaver-proc* nil)
 
 (defun start-screen-saver* (&optional verbosep)
-  (run-shell-command "exec xset +dpms")
+  (sh "xset" "+dpms")
   (unless (process-live-p *screensaver-proc*)
     (when verbosep
       (message "Starting screen saver..."))
     (setq *screensaver-proc*
-          (run-shell-command "exec xscreensaver -no-splash"))))
+          (sh "xscreensaver" "-no-splash"))))
 
 (defun stop-screen-saver* (&optional verbosep)
-  (run-shell-command "exec xset -dpms")
+  (sh "xset" "-dpms")
   (when (process-live-p *screensaver-proc*)
     (when verbosep
       (message "Stopping screen saver..."))
-    (run-shell-command "exec xscreensaver-command -exit")
+    (sh "xscreensaver-command" "-exit")
     (setq *screensaver-proc* nil)))
 
 (defcommand start-screen-saver () ()
@@ -238,22 +238,19 @@
 
 (defcommand activate-screen-saver () ()
   "Activate screen saver"
-  (run-shell-command "exec xscreensaver-command -activate"))
+  (sh "xscreensaver-command" "-activate"))
 
 (defcommand lock-screen () ()
   "Lock the screen, and power down the display"
-  (run-shell-command "exec xset dpms force off")
+  (sh "xset" "dpms" "force" "off")
   (sleep 1)
-  (run-shell-command "exec xscreensaver-command -lock"))
-
-(define-key *top-map* (kbd "s-Pause") "lock-screen")
-(define-key *top-map* (kbd "s-F9") "lock-screen")
+  (sh "xscreensaver-command" "-lock"))
 
 (defcommand suspend () ()
-  "Suspend the system"
-  (run-shell-command "exec systemctl suspend"))
-
-(define-key *root-map* (kbd "z") "suspend")
+    "Suspend the system"
+  (lock-screen)
+  (sleep 1)
+  (sh "systemctl" "suspend"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -336,13 +333,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defcommand audio-pause () ()
-  (run-shell-command "exec emacsclient -e '(emms-pause)'"))
+  (sh "emacsclient" "-e" "(emms-pause)"))
 (defcommand audio-stop () ()
-  (run-shell-command "exec emacsclient -e '(emms-stop)'"))
+  (sh "emacsclient" "-e" "(emms-stop)"))
 (defcommand audio-previous () ()
-  (run-shell-command "exec emacsclient -e '(emms-previous)'"))
+  (sh "emacsclient" "-e" "(emms-previous)"))
 (defcommand audio-next () ()
-  (run-shell-command "exec emacsclient -e '(emms-next)'"))
 
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-10- pulse")
 (define-key *top-map* (kbd "XF86AudioRaiseVolume") "amixer-Master-10+ pulse")
@@ -359,17 +355,18 @@
 (define-key *root-map* (kbd "C-o") "fnext")
 (define-key *root-map* (kbd "w") "windowlist")
 (define-key *root-map* (kbd "C-w") "windowlist")
+  (sh "emacsclient" "-e" "(emms-next)"))
 
 (defun get-brightness ()
   (let* ((*read-eval* nil)
          (current (read-from-string
-                   (run-shell-command "exec xbacklight -get" t))))
+                   (sh< "xbacklight" "-get"))))
     (round current)))
 
 (defcommand change-brightness (amount) ((:number "Amount: "))
   (let* ((cur (get-brightness))
          (next (min 100 (max 0 (+ cur amount)))))
-    (run-shell-command (format nil "exec xbacklight -set ~a" next))
+    (sh "xbacklight" "-set" next)
     (message
      (concat "Brightness: "
              (format nil "~C^B~A%" #\Newline next)
@@ -385,7 +382,7 @@
 (defcommand redshift-on () ()
   "Enable redshift"
   (unless (process-live-p *redshift-proc*)
-    (setq *redshift-proc* (run-shell-command "exec redshift"))))
+    (setq *redshift-proc* (sh "redshift"))))
 
 (defcommand redshift-off () ()
   "Enable redshift"
@@ -399,51 +396,60 @@
 
 (defcommand firefox () ()
   "Launch or raise firefox"
-  (run-or-raise "exec /app/firefox/firefox" '(:class "Firefox")))
+  (run-or-raise "exec firefox" '(:class "Firefox")))
 
 (defcommand pfirefox () ()
   "Launch or raise private mode firefox"
-  (run-shell-command
-   "exec /app/firefox/firefox -private -safe-mode -no-remote"
+  (run-or-raise
+   "firefox -private -safe-mode -no-remote"
    '(:class "Firefox")))
-
-(defun shell-commands (&rest commands)
-  (dolist (command commands)
-    (run-shell-command (concat "exec " command))))
 
 (defun setup-touchpad ()
   "Configure touchpad"
-  (shell-commands
-   (concat
-    "synclient"
-    " VertTwoFingerScroll=1"
-    " VertScrollDelta=-111"
-    " HorizScrollDelta=-111"
-    " HorizTwoFingerScroll=1"
-    " TapButton1=1"
-    " TapButton2=3"
-    " TapButton3=2"
-    " PalmDetect=1")))
+  (sh "synclient"
+      "VertTwoFingerScroll=1"
+      "VertScrollDelta=-111"
+      "HorizScrollDelta=-111"
+      "HorizTwoFingerScroll=1"
+      "TapButton1=1"
+      "TapButton2=3"
+      "TapButton3=2"
+      "PalmDetect=1")
+  (sb-posix:putenv "GDK_CORE_DEVICE_EVENTS=1"))
 
-(defun capslock-as-control ()
+(defcommand capslock-as-hyper () ()
+  "Make CapsLock a Hyper key"
+  (sh "setxkbmap" "-option" "")
+  ;; (sh "setxkbmap" "-option" "ctrl:ralt_rctrl")
+  (sh "xmodmap"
+      "-e" "remove mod4 = Hyper_L"
+      "-e" "keycode 66 = Hyper_L"
+      "-e" "clear mod2"
+      "-e" "clear mod3"
+      "-e" "clear lock"
+      "-e" "add mod3 = Hyper_L"))
+
+;; (capslock-as-hyper)
+
+(defcommand capslock-as-control () ()
   "Make CapsLock a Control key"
-  (run-shell-command "exec setxkbmap -option ctrl:nocaps"))
+  (sh "setxkbmap" "-option" "ctrl:nocaps"))
+
+;; (capslock-as-control)
 
 (defun init-mouse-pointer ()
-  (shell-commands "xsetroot -cursor_name left_ptr"))
+  (sh "xsetroot" "-cursor_name" "left_ptr"))
 
 (defcommand gnome-settings-daemon () ()
   "Run the gnome-settings-daemon"
-  (run-shell-command
-   "exec /usr/lib/gnome-settings-daemon/gsd-xsettings"))
+  (sh "/usr/lib/gnome-settings-daemon/gsd-xsettings"))
 
 (defcommand enable-external-display () ()
   "Enable an external display"
-  (run-shell-command
-   "exec xrandr --output eDP1 --off --output DP2-2 --auto"))
+  (sh "xrandr" "--output" "eDP1" "--off" "--output" "DP2-2" "--auto"))
 
 (defcommand internal-display () ()
-  (run-prog-collect-output "/bin/sh" "-c" "xrandr --output eDP1 --mode 1920x1080 --output DP2-2 --off"))
+  (sh "xrandr" "--output" "eDP1" "--mode" "1920x1080" "--output" "DP2-2" "--off"))
 
 (load-module "cpu")
 (load-module "mem")
