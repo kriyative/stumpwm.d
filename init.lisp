@@ -30,6 +30,18 @@
         s1
         (concat s1 " ..."))))
 
+(defun sh* (command args &optional collect-output-p)
+  (let ((cli (format nil "exec ~a ~{\"~a\"~^ ~}" command args)))
+    (dformat 0 "sh*: ~a ~a~%" cli (if collect-output-p :collect-output))
+    (force-output)
+    (run-shell-command cli collect-output-p)))
+
+(defun sh (command &rest args)
+  (sh* command args))
+
+(defun sh< (command &rest args)
+  (sh* command args t))
+
 (define-stumpwm-type :shell (input prompt)
   (declare (ignore prompt))
   (let ((prompt (format nil "~A -c exec " *shell-program*)))
