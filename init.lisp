@@ -466,20 +466,21 @@
         *hidden-window-color* "^7*"
         *mode-line-timeout* 10
         *mode-line-position* :top
-        *message-window-gravity* :top
+        *message-window-gravity* :center
         *message-window-padding* 5
-        *input-window-gravity* :top
-        *window-border-style* :thin
-        *normal-border-width* 1)
+        *input-window-gravity* :center
+        *window-border-style* :thick
+        *normal-border-width* 1
+        *timeout-wait* 2)
   (sync-all-frame-windows (current-group)))
 
-(set-normal-gravity :bottom)
-(set-transient-gravity :top)
+(set-normal-gravity :top)
+(set-transient-gravity :center)
 (set-fg-color "white")
 (set-bg-color "black")
 ;; (set-border-color "black")
 (set-win-bg-color "white")
-(set-focus-color "black")
+(set-focus-color "green")
 (set-msg-border-width 1)
 (ql:quickload :clx-truetype)
 (xft:cache-fonts)
