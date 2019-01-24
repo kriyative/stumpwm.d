@@ -616,6 +616,10 @@
    ("S-XF86MonBrightnessUp" "change-brightness 1")
    ("XF86MonBrightnessDown" "change-brightness -10")
    ("S-XF86MonBrightnessDown" "change-brightness -1")
+   ("F9" "change-brightness -10")
+   ("S-F9" "change-brightness -1")
+   ("F10" "change-brightness 10")
+   ("S-F10" "change-brightness 1")
 
    ("s-Left" "ratrelwarp -10 0")
    ("s-Right" "ratrelwarp 10 0")
