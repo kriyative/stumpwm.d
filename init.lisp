@@ -470,10 +470,11 @@
 					  ;; "^B%v^b"
                                           "^>"
                                           " %U"
-                                          " | %c,%M"
-                                          " | %W: %B"
+                                          " | %C| %M"
+                                          "| %W: %B"
                                           " | %I"
                                           " | %d")
+        cpu::*cpu-modeline-fmt* "%c"
         *hidden-window-color* "^7*"
         *mode-line-timeout* 10
         *mode-line-position* :top
