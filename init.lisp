@@ -742,16 +742,11 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
    ("z" "suspend")))
 
 ;; (setq *debug-level* 0)
+;; (setq *debug-level* 2)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun default-startup ()
-  (gnome-settings-daemon)
-  (capslock-as-control)
-  ;; (capslock-as-hyper)
-  (sh "xsetroot" "-bg" "black")
-  (init-mouse-pointer)
-  (setup-touchpad)
+(defun app-startup ()
   (redshift-on)
   (start-screen-saver)
   (clipboard-history:start-clipboard-manager)
@@ -766,8 +761,16 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
            (sb-posix:getenv "HOME")))
   (emacs)
   (firefox)
-  (chromium)
-  )
+  (chromium))
+
+(defun default-startup ()
+  (gnome-settings-daemon)
+  (capslock-as-control)
+  ;; (capslock-as-hyper)
+  (sh "xsetroot" "-bg" "black")
+  (init-mouse-pointer)
+  (setup-touchpad)
+  (app-startup))
 
 (swank)
 (default-startup)
