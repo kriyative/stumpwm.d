@@ -734,10 +734,12 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
    ("C-y" "show-clipboard-history")
    ("C-f" "frame-redo")
    ("C-x" *ctlx-map*)
-   ("p" "fprev")
+   ("c" "term")
+   ("C-c" "term")
+   ("l" "lock-screen")
    ("n" "fnext")
-   ("z" "suspend")
-   ("c" "term")))
+   ("p" "fprev")
+   ("z" "suspend")))
 
 ;; (setq *debug-level* 0)
 
