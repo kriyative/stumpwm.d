@@ -589,6 +589,43 @@
         keydef
       (define-key keymap (kbd keyseq) command))))
 
+(defun select-window-from-menu-1 (windows fmt &optional prompt
+                                                (filter-pred *window-menu-filter*))
+  "Allow the user to select a window from the list passed in @var{windows}.  The
+@var{fmt} argument specifies the window formatting used.  Returns the window
+selected."
+  (second (select-from-menu (current-screen)
+                            (mapcar (lambda (w)
+                                      (list (format-expand *window-formatters* fmt w) w))
+                                    windows)
+                            prompt
+                            (or (position (current-window) windows) 0) ; Initial selection
+                            (let ((m (make-sparse-keymap)))
+                              (define-key m (kbd "M-S-TAB") 'menu-up)
+                              (define-key m (kbd "S-TAB") 'menu-up)
+                              (define-key m (kbd "M-TAB") 'menu-down)
+                              (define-key m (kbd "TAB") 'menu-down)
+                              m)
+                            filter-pred)))
+
+(defcommand cycle-windowlist (&optional (fmt *window-format*)
+                                        window-list) (:rest)
+  "Allow the user to select a window from the list of windows and focus the
+selected window. For information of menu bindings see @ref{Menus}. The optional
+ argument @var{fmt} can be specified to override the default window formatting.
+The optional argument @var{window-list} can be provided to show a custom window
+list (see @command{windowlist-by-class}). The default window list is the list of
+all window in the current group. Also note that the default window list is sorted
+by number and if the @var{windows-list} is provided, it is shown unsorted (as-is)."
+  ;; Shadowing the window-list argument.
+  (if-let ((window-list (or window-list
+                            (sort-windows-by-number
+                             (group-windows (current-group))))))
+          (if-let ((window (select-window-from-menu-1 window-list fmt)))
+                  (group-focus-window (current-group) window)
+                  (throw 'error :abort))
+          (message "No Managed Windows")))
+
 (bind-keys
  *top-map*
  '(("s-!" "exec")
