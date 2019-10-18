@@ -371,7 +371,8 @@
 ;; (capslock-as-control)
 
 (defun init-mouse-pointer ()
-  (sh "xsetroot" "-cursor_name" "left_ptr"))
+  (sh "xsetroot" "-cursor_name" "left_ptr")
+  (sh "xinput" "-set-ptr-feedback" "11" "0" "1" "16"))
 
 (defcommand gnome-settings-daemon () ()
   "Run the gnome-settings-daemon"
