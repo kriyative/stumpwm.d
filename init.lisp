@@ -557,12 +557,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defparameter *default-remapped-keys*
+  '(("C-n"   . "Down")
+    ("C-p"   . "Up")))
+
 (define-remapped-keys
-    '(("(.*[Cc]hrom|[Ff]irefox|[Ee]vince|keepassxc)"
+    `(("(.*[Cc]hrom|[Ff]irefox|[Ee]vince|keepassxc|libreoffice)"
+       ,@*default-remapped-keys*
        ("C-a"   . "Home")
        ("C-e"   . "End")
-       ("C-n"   . "Down")
-       ("C-p"   . "Up")
        ("C-f"   . "Right")
        ("C-b"   . "Left")
        ("C-v"   . "Next")
