@@ -34,7 +34,9 @@
   (let ((cli (format nil "exec ~a ~{\"~a\"~^ ~}" command args)))
     (dformat 0 "sh*: ~a ~a~%" cli (if collect-output-p :collect-output))
     (force-output)
-    (run-shell-command cli collect-output-p)))
+    (if collect-output-p
+        (apply 'run-prog-collect-output command args)
+        (run-prog command :args args :wait nil))))
 
 (defun sh (command &rest args)
   (sh* command args))
