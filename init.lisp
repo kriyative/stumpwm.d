@@ -678,17 +678,22 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
    ("s-Up" "ratrelwarp 0 -10")
    ("s-Down" "ratrelwarp 0 10")
    ("s-F9" "lock-screen")
-   ("s-Pause" "audio-pause")))
+   ("s-Pause" "audio-pause")
+   ("M-TAB" "cycle-windowlist")
+   ("Print" "gnome-screenshot-screen")
+   ("C-Print" "gnome-screenshot-screen-select")))
 
 (bind-keys
  *top-map*
- (loop for i from 0 to 9
+ (loop
+    for i from 0 to 9
     collect (list
              (format nil "s-~d" i)
              (format nil "select-window-by-number ~d" i))))
 (bind-keys
  *top-map*
- (loop for i from 0 to 9
+ (loop
+    for i from 0 to 9
     collect (list
              (format nil "s-C-~d" i)
              (format nil "pull ~d" i))))
