@@ -385,6 +385,14 @@
 (defcommand internal-display () ()
   (sh "xrandr" "--output" "eDP1" "--mode" "1920x1080" "--output" "DP2-2" "--off"))
 
+(defcommand gnome-screenshot-screen () ()
+  "Take a screenshot of whole screen"
+  (sh "gnome-screenshot"))
+
+(defcommand gnome-screenshot-screen-select () ()
+  "Take a screenshot of selected portion of screen"
+  (sh "gnome-screenshot" "-a"))
+
 (load-module "cpu")
 (load-module "mem")
 (load-module "wifi")
