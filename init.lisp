@@ -428,7 +428,7 @@
                                             :end2 (min 8 (length str))))
                                  env))))
     (sb-posix:putenv "_JAVA_AWT_WM_NONREPARENTING=1")
-    (apply #'sb-ext:run-program prog args :output (if output output t)
+    (apply #'sb-ext:run-program prog args :output (if output output t) :search t
            :error (if error error t) :wait wait :environment env opts)))
 
 (defun fmt-mail-biff (mb)
