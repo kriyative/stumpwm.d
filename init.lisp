@@ -304,7 +304,7 @@
 (defcommand change-brightness (amount) ((:number "Amount: "))
   (let* ((cur (get-brightness))
          (next (min 100 (max 0 (+ cur amount)))))
-    (sh "xbacklight" "-set" next)
+    (sh "xbacklight" "-set" (format nil "~d" next))
     (message
      (concat "Brightness: "
              (format nil "~C^B~A%" #\Newline next)
