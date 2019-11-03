@@ -477,7 +477,7 @@
         cpu::*cpu-modeline-fmt* "%c"
         *hidden-window-color* "^7*"
         *mode-line-timeout* 10
-        *mode-line-position* :top
+        *mode-line-position* :bottom
         *message-window-gravity* :center
         *message-window-padding* 5
         *input-window-gravity* :center
@@ -490,7 +490,7 @@
 (set-transient-gravity :center)
 (set-fg-color "white")
 (set-bg-color "black")
-;; (set-border-color "black")
+(set-border-color "red")
 (set-win-bg-color "white")
 (set-focus-color "green")
 (set-msg-border-width 1)
