@@ -763,11 +763,18 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
   (firefox)
   (chromium))
 
+(defun set-window-background-color (win color)
+  (setf (xlib:window-background win) color))
+
+(defun set-root-window-background-color (color)
+  (set-window-background-color (screen-root (current-screen))
+                               color))
+
 (defun default-startup ()
   (gnome-settings-daemon)
   (capslock-as-control)
   ;; (capslock-as-hyper)
-  (sh "xsetroot" "-bg" "black")
+  (set-root-window-background-color 0)
   (init-mouse-pointer)
   (setup-touchpad)
   (app-startup))
