@@ -469,49 +469,16 @@
 
 (add-screen-mode-line-formatter #\U 'fmt-mail-biff)
 
-;; startup
-(progn
-  (setq *window-format* "%m%n%s%10t"
-        *time-modeline-string* "%a %b %e %k:%M"
-        *screen-mode-line-format* (concat "%3n | "
-                                          "%v"
-					  ;; "^B%v^b"
-                                          "^>"
-                                          " %U"
-                                          " | %C| %M"
-                                          "| %W: %B"
-                                          " | %I"
-                                          " | %d")
-        cpu::*cpu-modeline-fmt* "%c"
-        *hidden-window-color* "^7*"
-        *mode-line-timeout* 10
-        *mode-line-position* :bottom
-        *message-window-gravity* :center
-        *message-window-padding* 5
-        *input-window-gravity* :center
-        *window-border-style* :thick
-        *normal-border-width* 1
-        *timeout-wait* 2)
-  (sync-all-frame-windows (current-group)))
+(defvar *mode-line-brightness* 0.25)
 
-(set-normal-gravity :top)
-(set-transient-gravity :center)
-(set-fg-color "white")
-(set-bg-color "black")
-(set-border-color "red")
-(set-win-bg-color "white")
-(set-focus-color "green")
-(set-msg-border-width 1)
-(ql:quickload :clx-truetype)
-(xft:cache-fonts)
-(load-module "ttf-fonts")
-;; (clx-truetype:get-font-families)
-;; (clx-truetype:get-font-subfamilies "DejaVu Sans Mono")
-(set-font
- (make-instance 'xft:font
-                :family "DejaVu Sans Mono"
-                :subfamily "Book"
-                :size 12))
+;; overrides:
+;; https://github.com/kriyative/stumpwm/blob/master/mode-line.lisp#L196
+(defun update-mode-line-color-context (ml)
+  (let* ((cc (mode-line-cc ml))
+         (screen (mode-line-screen ml))
+         (bright (lookup-color screen *mode-line-foreground-color*)))
+    (adjust-color bright *mode-line-brightness*)
+    (setf (ccontext-default-bright cc) (alloc-color screen bright))))
 
 (add-hook *quit-hook* 'redshift-off)
 
@@ -523,32 +490,23 @@
                         *mode-line-timeout*
                         'update-all-mode-lines)))
 
-(toggle-mode-line (current-screen) (current-head))
-
-;; set window-class property of mode-lines - used by compton
-(dolist (m *mode-lines*)
-  (xlib:set-wm-class (mode-line-window m)
-                     "StumpwmModeline"
-                     "stumpwm-modeline"))
-
-(defvar title-remaps nil)
-(setq title-remaps
-      '(("Gnome-terminal" . "term")
-        ("ubuntu-terminal-app" . "term")
-        ("urxvt" . "term")
-        ("Chromium-browser" . "chromi")
-        ("Google-chrome" . "gchrom")
-        ("Conkeror" . "conk")
-        ("Firefox" . "fox")
-        ("Emacs26" . "emacs")
-        ("Emacs" . "emacs")
-        ("keepassxc" . "kpass")))
+(defvar *title-remaps*
+  '(("Gnome-terminal" . "term")
+    ("ubuntu-terminal-app" . "term")
+    ("urxvt" . "term")
+    ("Chromium-browser" . "chromi")
+    ("Google-chrome" . "gchrom")
+    ("Conkeror" . "conk")
+    ("Firefox" . "fox")
+    ("Emacs26" . "emacs")
+    ("Emacs" . "emacs")
+    ("keepassxc" . "kpass")))
 
 (defun new-window-customizations (win)
   (let ((title-max-len 10)
         (title (cdr
                 (assoc (window-class win)
-                       title-remaps
+                       *title-remaps*
                        :test 'equal))))
     (setf (window-user-title win)
           (or title
@@ -589,7 +547,8 @@
        ("C-M-f" . "M-Right")
        ("C-k"   . ("S-End" "C-x"))
        ("M-k"   . "C-k")
-       ("C-d"   . "Delete"))))
+       ("C-d"   . "Delete")
+       ("M-d"   . ("S-C-Right" "Delete")))))
 
 (defun bind-keys (keymap keydefs)
   (dolist (keydef keydefs)
@@ -632,135 +591,17 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
           (if-let ((window (select-window-from-menu-1 window-list fmt)))
                   (group-focus-window (current-group) window)
                   (throw 'error :abort))
-          (message "No Managed Windows")))
-
-(bind-keys
- *top-map*
- '(("s-!" "exec")
-   ("s-&" "exec")
-   ("s-+" "balance-frames")
-   ("s--" "remove")
-   ("s-:" "eval")
-   ("s-;" "colon")
-   ;; ("s-a" "ratclick 1")
-   ;; ("s-s" "ratclick 2")
-   ("s-Q" "only")
-   ("s-`" "only")
-   ("s-S" "hsplit")
-   ("s-h" "hsplit")
-   ("s-d" "remove")
-   ("s-\\" "hsplit")
-   ("s-k" "delete")
-   ("s-l" "lock-screen")
-   ("s-n" "fnext")
-   ("s-o" "fother")
-   ("s-p" "fprev")
-   ("s-q" "send-raw-key")
-   ("s-r" "remove")
-   ("s-s" "vsplit")
-   ("s-u" "frame-undo")
-   ("s-w" "windowlist")
-   ("s-x" "colon")
-   ("s-y" "show-clipboard-history")
-   ("s-SPC" "audio-pause")
-   ("XF86AudioLowerVolume" "amixer-Master-10- pulse")
-   ("S-XF86AudioLowerVolume" "amixer-Master-1- pulse")
-   ("XF86AudioRaiseVolume" "amixer-Master-10+ pulse")
-   ("S-XF86AudioRaiseVolume" "amixer-Master-1+ pulse")
-   ("XF86AudioMute" "amixer-Master-toggle pulse")
-   ("XF86AudioPlay" "audio-pause")
-   ("XF86AudioStop" "audio-stop")
-   ("XF86AudioPrev" "audio-previous")
-   ("XF86AudioNext" "audio-next")
-   ("XF86MonBrightnessUp" "change-brightness 10")
-   ("S-XF86MonBrightnessUp" "change-brightness 1")
-   ("XF86MonBrightnessDown" "change-brightness -10")
-   ("S-XF86MonBrightnessDown" "change-brightness -1")
-   ("F9" "change-brightness -10")
-   ("S-F9" "change-brightness -1")
-   ("F10" "change-brightness 10")
-   ("S-F10" "change-brightness 1")
-
-   ("s-Left" "ratrelwarp -10 0")
-   ("s-Right" "ratrelwarp 10 0")
-   ("s-Up" "ratrelwarp 0 -10")
-   ("s-Down" "ratrelwarp 0 10")
-   ("s-F9" "lock-screen")
-   ("s-Pause" "audio-pause")
-   ("M-TAB" "cycle-windowlist")
-   ("Print" "gnome-screenshot-screen")
-   ("C-Print" "gnome-screenshot-screen-select")))
-
-(bind-keys
- *top-map*
- (loop
-    for i from 0 to 9
-    collect (list
-             (format nil "s-~d" i)
-             (format nil "select-window-by-number ~d" i))))
-(bind-keys
- *top-map*
- (loop
-    for i from 0 to 9
-    collect (list
-             (format nil "s-C-~d" i)
-             (format nil "pull ~d" i))))
-
-(defvar *audio-map* (make-sparse-keymap))
-(bind-keys
- *audio-map*
- '(("n" "audio-next")
-   ("p" "audio-previous")
-   ("d" "set-audio-profile")
-   ("C-d" "set-audio-profile")
-   ("SPC" "audio-pause")))
-
-(defvar *ctlx-map* (make-sparse-keymap))
-(bind-keys
- *ctlx-map*
- '(("0" "remove")
-   ("1" "only")
-   ("2" "vsplit")
-   ("3" "hsplit")
-   ("6" "resize-66%-width")
-   ("7" "resize-33%-width")
-   ("8" "resize-75%-width")
-   ("+" "balance-frames")
-   ("C-y" "show-clipboard-history")
-   ("p" "fprev")
-   ("n" "fnext")))
-
-(bind-keys
- *root-map*
- '(("C-q" "send-raw-key")
-   ("SPC" "audio-pause")
-   ("C-o" "fother")
-   ("w" "windowlist")
-   ("C-w" "windowlist")
-   ("C-a" *audio-map*)
-   ("C-b" "frame-undo")
-   ("C-y" "show-clipboard-history")
-   ("C-f" "frame-redo")
-   ("C-x" *ctlx-map*)
-   ("c" "term")
-   ("C-c" "term")
-   ("l" "lock-screen")
-   ("n" "fnext")
-   ("p" "fprev")
-   ("z" "suspend")))
-
-;; (setq *debug-level* 0)
-;; (setq *debug-level* 2)
+    (message "No Managed Windows")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun app-startup ()
+(defun start-apps ()
   (redshift-on)
   (start-screen-saver)
   (clipboard-history:start-clipboard-manager)
   ;; (clipboard-history:stop-clipboard-manager)
 
-  (sh "dropbox" "start")
+  ;; (sh "dropbox" "start")
   ;; (sh "compton" "-b")
   ;; (sh "xwrits" "+breakclock" "typetime=27" "breaktime=3")
 
@@ -772,20 +613,193 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
   (chromium))
 
 (defun set-window-background-color (win color)
-  (setf (xlib:window-background win) color))
+  (setf (xlib:window-background win) color)
+  (xlib:clear-area win))
 
 (defun set-root-window-background-color (color)
-  (set-window-background-color (screen-root (current-screen))
-                               color))
+  (set-window-background-color (screen-root (current-screen)) color))
 
-(defun default-startup ()
+;; (set-root-window-background-color *default-bg-color*)
+
+(defun init-vars ()
+  (setq *window-format* "%m%n%s%10t"
+        *time-modeline-string* "%a %b %e %H:%M"
+        *screen-mode-line-format* (concat "%3n | "
+                                          "%v"
+					  ;; "^B%v^b"
+                                          "^>"
+                                          " %U"
+                                          " | %C| %M"
+                                          "| %W: %B"
+                                          " | %I"
+                                          " | %d")
+        cpu::*cpu-modeline-fmt* "%c"
+        *hidden-window-color* "^7*"
+        *mode-line-timeout* 10
+        *mode-line-position* :bottom
+        *mode-line-foreground-color* "white"
+        *mode-line-brightness* 0.75
+        *message-window-gravity* :center
+        *message-window-padding* 5
+        *input-window-gravity* :center
+        *window-border-style* :thick
+        *normal-border-width* 1
+        *timeout-wait* 2)
+  (sync-all-frame-windows (current-group)))
+
+(ql:quickload :clx-truetype)
+
+(defun init-fonts ()
+  (xft:cache-fonts)
+  (load-module "ttf-fonts")
+  ;; (clx-truetype:get-font-families)
+  ;; (clx-truetype:get-font-subfamilies "DejaVu Sans Mono")
+  (set-font
+   (make-instance 'xft:font
+                  :family "DejaVu Sans Mono"
+                  :subfamily "Book"
+                  :size 12)))
+
+(defvar *audio-map* (make-sparse-keymap))
+(defvar *ctlx-map* (make-sparse-keymap))
+(defun init-keybindings ()
+  (bind-keys
+   *top-map*
+   '(("s-!" "exec")
+     ("s-&" "exec")
+     ("s-+" "balance-frames")
+     ("s--" "remove")
+     ("s-:" "eval")
+     ("s-;" "colon")
+     ;; ("s-a" "ratclick 1")
+     ;; ("s-s" "ratclick 2")
+     ("s-Q" "only")
+     ("s-`" "only")
+     ("s-S" "hsplit")
+     ("s-h" "hsplit")
+     ("s-d" "remove")
+     ("s-\\" "hsplit")
+     ("s-k" "delete")
+     ("s-l" "lock-screen")
+     ("s-n" "fnext")
+     ("s-o" "fother")
+     ("s-p" "fprev")
+     ("s-q" "send-raw-key")
+     ("s-r" "remove")
+     ("s-s" "vsplit")
+     ("s-u" "frame-undo")
+     ("s-w" "windowlist")
+     ("s-x" "colon")
+     ("s-y" "show-clipboard-history")
+     ("s-SPC" "audio-pause")
+     ("XF86AudioLowerVolume" "amixer-Master-10- pulse")
+     ("S-XF86AudioLowerVolume" "amixer-Master-1- pulse")
+     ("XF86AudioRaiseVolume" "amixer-Master-10+ pulse")
+     ("S-XF86AudioRaiseVolume" "amixer-Master-1+ pulse")
+     ("XF86AudioMute" "amixer-Master-toggle pulse")
+     ("XF86AudioPlay" "audio-pause")
+     ("XF86AudioStop" "audio-stop")
+     ("XF86AudioPrev" "audio-previous")
+     ("XF86AudioNext" "audio-next")
+     ("XF86MonBrightnessUp" "change-brightness 10")
+     ("S-XF86MonBrightnessUp" "change-brightness 1")
+     ("XF86MonBrightnessDown" "change-brightness -10")
+     ("S-XF86MonBrightnessDown" "change-brightness -1")
+     ("F9" "change-brightness -10")
+     ("S-F9" "change-brightness -1")
+     ("F10" "change-brightness 10")
+     ("S-F10" "change-brightness 1")
+
+     ("s-Left" "ratrelwarp -10 0")
+     ("s-Right" "ratrelwarp 10 0")
+     ("s-Up" "ratrelwarp 0 -10")
+     ("s-Down" "ratrelwarp 0 10")
+     ("s-F9" "lock-screen")
+     ("s-Pause" "audio-pause")
+     ("M-TAB" "cycle-windowlist")
+     ("Print" "gnome-screenshot-screen")
+     ("C-Print" "gnome-screenshot-screen-select")))
+  (bind-keys
+   *top-map*
+   (loop
+      for i from 0 to 9
+      collect (list
+               (format nil "s-~d" i)
+               (format nil "select-window-by-number ~d" i))))
+  (bind-keys
+   *top-map*
+   (loop
+      for i from 0 to 9
+      collect (list
+               (format nil "s-C-~d" i)
+               (format nil "pull ~d" i))))
+  (bind-keys
+   *audio-map*
+   '(("n" "audio-next")
+     ("p" "audio-previous")
+     ("d" "set-audio-profile")
+     ("C-d" "set-audio-profile")
+     ("SPC" "audio-pause")))
+  (bind-keys
+   *ctlx-map*
+   '(("0" "remove")
+     ("1" "only")
+     ("2" "vsplit")
+     ("3" "hsplit")
+     ("6" "resize-66%-width")
+     ("7" "resize-33%-width")
+     ("8" "resize-75%-width")
+     ("+" "balance-frames")
+     ("C-y" "show-clipboard-history")
+     ("p" "fprev")
+     ("n" "fnext")))
+  (bind-keys
+   *root-map*
+   '(("C-q" "send-raw-key")
+     ("SPC" "audio-pause")
+     ("C-o" "fother")
+     ("w" "windowlist")
+     ("C-w" "windowlist")
+     ("C-a" *audio-map*)
+     ("C-b" "frame-undo")
+     ("C-y" "show-clipboard-history")
+     ("C-f" "frame-redo")
+     ("C-x" *ctlx-map*)
+     ("c" "term")
+     ("C-c" "term")
+     ("l" "lock-screen")
+     ("n" "fnext")
+     ("p" "fprev")
+     ("z" "suspend")
+     ("M-m" "show-message-window-messages"))))
+
+
+(defun start-stumpwm ()
+  (swank)
+  (init-vars)
+  (set-normal-gravity :top)
+  (set-transient-gravity :center)
+  (set-fg-color "white")
+  (set-bg-color "black")
+  (set-border-color "red")
+  (set-win-bg-color "white")
+  (set-focus-color "green")
+  (set-msg-border-width 1)
+  (init-fonts)
+  (toggle-current-mode-line)
+  ;; set window-class property of mode-lines - used by compton
+  (dolist (m *mode-lines*)
+    (xlib:set-wm-class (mode-line-window m)
+                       "StumpwmModeline"
+                       "stumpwm-modeline"))
   (gnome-settings-daemon)
+  (init-notify)
+  (init-keybindings)
   (capslock-as-control)
   ;; (capslock-as-hyper)
   (set-root-window-background-color 0)
   (init-mouse-pointer)
   (setup-touchpad)
-  (app-startup))
+  (start-apps))
 
-(swank)
-(default-startup)
+(start-stumpwm)
