@@ -82,6 +82,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun init-notify ()
+  (load-module "notify")
+  (notify:notify-server-toggle))
+
+(defcommand show-message-window-messages () ()
+  "Display a list of message-window messages"
+  (let* ((*record-last-msg-override* t)
+         (screen (current-screen))
+         (sel (select-from-menu screen
+                                (screen-last-msg screen)
+                                nil)))
+    (when sel
+      (echo-string-list screen sel))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defvar *group-undo-stack* nil)
 (defvar *group-redo-stack* nil)
 (defvar *group-stack-max-depth* 10)
