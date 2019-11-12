@@ -421,6 +421,8 @@
 
 (defvar *mu-cmd* "./.emacs.d/el-get/mu4e/mu/mu")
 
+;; overrides:
+;; https://github.com/kriyative/stumpwm/blob/master/wrappers.lisp#L40
 (defun run-prog (prog &rest opts &key args output (wait t) error &allow-other-keys)
   "Common interface to shell. Does not return anything useful."
   (remf opts :args)
