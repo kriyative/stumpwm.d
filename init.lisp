@@ -250,6 +250,12 @@
 
 (add-hook *fullscreen-hook* 'toggle-screensaver-on-fullscreen)
 
+(defun toggle-current-mode-line (&rest args)
+  (declare (ignore args))
+  (toggle-mode-line (current-screen) (current-head)))
+
+(add-hook *fullscreen-hook* 'toggle-current-mode-line)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (load-module "amixer")
