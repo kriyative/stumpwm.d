@@ -104,15 +104,7 @@
 (export '(sysfs-int-field-or-nil))
 
 (in-package :stumpwm)
-
-(defun fmt-power-source (ml)
-  (declare (ignore ml))
-  (if (= 1
-         (battery-portable:sysfs-int-field-or-nil
-          "/sys/class/power_supply/AC/"
-          "online"))
-      "AC"
-    "BAT"))
+(load-module "ttf-fonts")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -473,6 +465,15 @@
 
 ;; (fmt-mail-biff 0)
 
+(defun fmt-power-source (ml)
+  (declare (ignore ml))
+  (if (= 1
+         (battery-portable:sysfs-int-field-or-nil
+          "/sys/class/power_supply/AC/"
+          "online"))
+      "AC"
+    "BAT"))
+
 (defvar *mode-line-brightness* 0.25)
 
 ;; overrides:
@@ -614,7 +615,7 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
            (sb-posix:getenv "HOME")))
   (emacs)
   (firefox)
-  (chromium))
+  (chrome))
 
 (defun set-window-background-color (win color)
   (setf (xlib:window-background win) color)
@@ -657,13 +658,12 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
 
 (defun init-fonts ()
   (xft:cache-fonts)
-  (load-module "ttf-fonts")
   ;; (clx-truetype:get-font-families)
   ;; (clx-truetype:get-font-subfamilies "DejaVu Sans Mono")
   ;; (clx-truetype:get-font-subfamilies "Noto Sans")
   (let ((fonts '((:family "DejaVu Sans Mono" :subfamily "Book" :size 12)
-                 (:family "Noto Sans Devanagari" :subfamily "Regular" :size 12))
-          ))
+                 #+nil (:family "Noto Sans Devanagari"
+                        :subfamily "Regular" :size 12))))
     (set-font (mapcar (lambda (font)
                         (apply 'make-instance 'xft:font font))
                       fonts))))
