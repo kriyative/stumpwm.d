@@ -78,14 +78,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(load-module "clipboard-history")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun init-notify ()
-  (load-module "notify")
-  (notify:notify-server-toggle))
-
 (defcommand show-message-window-messages () ()
   "Display a list of message-window messages"
   (let* ((*record-last-msg-override* t)
@@ -95,6 +87,39 @@
                                 nil)))
     (when sel
       (echo-string-list screen sel))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(load-module "amixer")
+(in-package :amixer)
+(defvolcontrol amixer-Master-10- "Master" "10%-")
+(defvolcontrol amixer-Master-10+ "Master" "10%+")
+
+(in-package :stumpwm)
+(ql:quickload "notify")
+(load-module "notify")
+(notify:notify-server-toggle)
+
+(load-module "clipboard-history")
+(load-module "cpu")
+(load-module "mem")
+(load-module "wifi")
+
+(load-module "battery-portable")
+(in-package :battery-portable)
+(export '(sysfs-int-field-or-nil))
+
+(in-package :stumpwm)
+
+(defun fmt-power-source (ml)
+  (declare (ignore ml))
+  (if (= 1
+         (battery-portable:sysfs-int-field-or-nil
+          "/sys/class/power_supply/AC/"
+          "online"))
+      "AC"
+    "BAT"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -219,7 +244,7 @@
   (sh "xscreensaver-command" "-lock"))
 
 (defcommand suspend () ()
-    "Suspend the system"
+  "Suspend the system"
   (lock-screen)
   (sleep 1)
   (sh "systemctl" "suspend"))
@@ -271,14 +296,6 @@
   (toggle-mode-line (current-screen) (current-head)))
 
 (add-hook *fullscreen-hook* 'toggle-current-mode-line)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(load-module "amixer")
-(in-package :amixer)
-(defvolcontrol amixer-Master-10- "Master" "10%-")
-(defvolcontrol amixer-Master-10+ "Master" "10%+")
-(in-package :stumpwm)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -415,26 +432,6 @@
   "Take a screenshot of selected portion of screen"
   (sh "gnome-screenshot" "-a"))
 
-(load-module "cpu")
-(load-module "mem")
-(load-module "wifi")
-
-(load-module "battery-portable")
-(in-package :battery-portable)
-(export '(sysfs-int-field-or-nil))
-
-(in-package :stumpwm)
-
-(defun fmt-power-source (ml)
-  (declare (ignore ml))
-  (if (= 1
-         (battery-portable:sysfs-int-field-or-nil
-          "/sys/class/power_supply/AC/"
-          "online"))
-      "AC"
-      "BAT"))
-(add-screen-mode-line-formatter #\W #'fmt-power-source)
-
 (defvar *mu-cmd* "./.emacs.d/el-get/mu4e/mu/mu")
 
 ;; overrides:
@@ -482,8 +479,6 @@
             cnt)))
 
 ;; (fmt-mail-biff 0)
-
-(add-screen-mode-line-formatter #\U 'fmt-mail-biff)
 
 (defvar *mode-line-brightness* 0.25)
 
@@ -607,7 +602,7 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
           (if-let ((window (select-window-from-menu-1 window-list fmt)))
                   (group-focus-window (current-group) window)
                   (throw 'error :abort))
-    (message "No Managed Windows")))
+          (message "No Managed Windows")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -659,22 +654,26 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
         *message-window-padding* 5
         *input-window-gravity* :center
         *window-border-style* :thick
-        *normal-border-width* 1
+        *normal-border-width* 4
         *timeout-wait* 2)
+  (add-screen-mode-line-formatter #\U 'fmt-mail-biff)
+  (add-screen-mode-line-formatter #\W 'fmt-power-source)
   (sync-all-frame-windows (current-group)))
 
-(ql:quickload :clx-truetype)
+(ql:quickload "clx-truetype")
 
 (defun init-fonts ()
   (xft:cache-fonts)
   (load-module "ttf-fonts")
   ;; (clx-truetype:get-font-families)
   ;; (clx-truetype:get-font-subfamilies "DejaVu Sans Mono")
-  (set-font
-   (make-instance 'xft:font
-                  :family "DejaVu Sans Mono"
-                  :subfamily "Book"
-                  :size 12)))
+  ;; (clx-truetype:get-font-subfamilies "Noto Sans")
+  (let ((fonts '((:family "DejaVu Sans Mono" :subfamily "Book" :size 12)
+                 (:family "Noto Sans Devanagari" :subfamily "Regular" :size 12))
+          ))
+    (set-font (mapcar (lambda (font)
+                        (apply 'make-instance 'xft:font font))
+                      fonts))))
 
 (defvar *audio-map* (make-sparse-keymap))
 (defvar *ctlx-map* (make-sparse-keymap))
@@ -703,6 +702,7 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
      ("s-q" "send-raw-key")
      ("s-r" "remove")
      ("s-s" "vsplit")
+     ("s-t" "pull-hidden-other")
      ("s-u" "frame-undo")
      ("s-w" "windowlist")
      ("s-x" "colon")
@@ -809,7 +809,6 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
                        "StumpwmModeline"
                        "stumpwm-modeline"))
   (gnome-settings-daemon)
-  (init-notify)
   (init-keybindings)
   (capslock-as-control)
   ;; (capslock-as-hyper)
