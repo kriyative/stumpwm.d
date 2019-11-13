@@ -355,9 +355,9 @@
     (sb-ext:process-kill *redshift-proc* sb-unix:sigint)
     (setq *redshift-proc* nil)))
 
-(defcommand chromium () ()
-  "Launch or raise chromium"
-  (run-or-raise "exec chromium-browser" '(:class "Chromium-browser")))
+(defcommand chrome () ()
+  "Launch Google Chrome"
+  (sh "firejail" "google-chrome"))
 
 (defcommand firefox () ()
   "Launch or raise firefox"
