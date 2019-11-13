@@ -24,12 +24,6 @@
                    (subseq ,stack 0 (1- ,max-depth))
                    ,stack))))
 
-(defun string-maxlen (s maxlen)
-  (let ((s1 (subseq s 0 (min maxlen (length s)))))
-    (if (string-equal s1 s)
-        s1
-        (concat s1 " ..."))))
-
 (defun sh* (command args &optional collect-output-p)
   (let ((cli (format nil "exec ~a ~{\"~a\"~^ ~}" command args)))
     (dformat 0 "sh*: ~a ~a~%" cli (if collect-output-p :collect-output))
@@ -89,7 +83,6 @@
       (echo-string-list screen sel))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 (load-module "amixer")
 (in-package :amixer)
@@ -788,7 +781,6 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
      ("p" "fprev")
      ("z" "suspend")
      ("M-m" "show-message-window-messages"))))
-
 
 (defun start-stumpwm ()
   (swank)
