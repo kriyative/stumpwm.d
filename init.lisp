@@ -503,6 +503,7 @@
     ("Google-chrome" . "gchrom")
     ("Conkeror" . "conk")
     ("Firefox" . "fox")
+    ("Firefox-esr" . "fox")
     ("Emacs26" . "emacs")
     ("Emacs" . "emacs")
     ("keepassxc" . "kpass")))
