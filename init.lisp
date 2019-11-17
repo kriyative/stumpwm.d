@@ -648,8 +648,8 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
         *message-window-gravity* :center
         *message-window-padding* 5
         *input-window-gravity* :center
-        *window-border-style* :thick
-        *normal-border-width* 4
+        *window-border-style* :thin
+        *normal-border-width* 1
         *timeout-wait* 2)
   (add-screen-mode-line-formatter #\U 'fmt-mail-biff)
   (add-screen-mode-line-formatter #\W 'fmt-power-source)
@@ -784,7 +784,7 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
      ("M-m" "show-message-window-messages"))))
 
 (defun start-stumpwm ()
-  (swank)
+  (ignore-errors (swank))
   (init-vars)
   (set-normal-gravity :top)
   (set-transient-gravity :center)
