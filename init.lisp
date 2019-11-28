@@ -819,6 +819,7 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
   (set-root-window-background-color 0)
   (init-mouse-pointer)
   (setup-touchpad)
+  (%grename "A" (current-group))
   (start-apps))
 
 (start-stumpwm)
