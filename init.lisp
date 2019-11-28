@@ -631,19 +631,26 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
 
 ;; (set-root-window-background-color *default-bg-color*)
 
+(defun time-dow-shortname-2ch ()
+  (subseq (time-dow-name) 0 2))
+
 (defun init-vars ()
+  (pushnew '(#\q time-dow-shortname-2ch)
+           *time-format-string-alist*)
   (setq *window-format* "%m%n%s%10t"
-        *time-modeline-string* "%a %b %e %H:%M"
-        *screen-mode-line-format* (concat "%3n | "
+        ;; *time-modeline-string* "%a %b %e %H:%M"
+        *time-modeline-string* "%q %m-%e %H:%M"
+        *screen-mode-line-format* (concat "%3n |"
                                           "%v"
 					  ;; "^B%v^b"
                                           "^>"
-                                          " %U"
+                                          "| %U"
                                           " | %C| %M"
-                                          "| %W: %B"
+                                          " | %W: %B"
                                           " | %I"
                                           " | %d")
         cpu::*cpu-modeline-fmt* "%c"
+        mem::*mem-modeline-fmt* "MEM: %a"
         *hidden-window-color* "^7*"
         *mode-line-timeout* 10
         *mode-line-position* :bottom
