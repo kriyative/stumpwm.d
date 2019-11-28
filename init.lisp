@@ -673,7 +673,7 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
   ;; (clx-truetype:get-font-families)
   ;; (clx-truetype:get-font-subfamilies "DejaVu Sans Mono")
   ;; (clx-truetype:get-font-subfamilies "Noto Sans")
-  (let ((fonts '((:family "DejaVu Sans Mono" :subfamily "Book" :size 12)
+  (let ((fonts '((:family "DejaVu Sans Mono" :subfamily "Book" :size 11)
                  #+nil (:family "Noto Sans Devanagari"
                         :subfamily "Regular" :size 12))))
     (set-font (mapcar (lambda (font)
