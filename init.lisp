@@ -464,7 +464,7 @@
             (if (positive-integer-p cnt)
                 "^B^3*~A:~D^*^b"
                 "~A:~D")
-            "mu"
+            "✉"
             cnt)))
 
 ;; (fmt-mail-biff 0)
