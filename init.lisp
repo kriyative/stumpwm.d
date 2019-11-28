@@ -174,6 +174,10 @@
                   (- twidth (frame-width frame))
                   :width)))
 
+(defcommand resize-25%-width () ()
+  "Resize width of current frame to 25% of screen-width"
+  (resize-width-pct 0.25))
+
 (defcommand resize-33%-width () ()
   "Resize width of current frame to 33% of screen-width"
   (resize-width-pct 0.33))
