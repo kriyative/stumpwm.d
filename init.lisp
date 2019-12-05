@@ -513,8 +513,15 @@
     ("Emacs" . "emacs")
     ("keepassxc" . "kpass")))
 
+(defun scrunch (s &key maxlen)
+  (let* ((len (- (or maxlen 6) 2))
+         (half-len (floor (/ len 2))))
+    (concat (subseq s 0 half-len)
+            ".."
+            (subseq s (- (length s) half-len)))))
+
 (defun new-window-customizations (win)
-  (let ((title-max-len 10)
+  (let ((title-max-len 8)
         (title (cdr
                 (assoc (window-class win)
                        *title-remaps*
@@ -524,7 +531,7 @@
               (let ((title (window-title win)))
                 (cond
                   ((and title (< title-max-len (length title)))
-                   (subseq (string-downcase title) 0 title-max-len))
+                   (scrunch (string-downcase title) :maxlen title-max-len))
 
                   (title title)
 
