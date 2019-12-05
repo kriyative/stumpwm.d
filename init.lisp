@@ -104,6 +104,7 @@
 (export '(sysfs-int-field-or-nil))
 
 (in-package :stumpwm)
+(ql:quickload "clx-truetype")
 (load-module "ttf-fonts")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -665,8 +666,6 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
   (add-screen-mode-line-formatter #\U 'fmt-mail-biff)
   (add-screen-mode-line-formatter #\W 'fmt-power-source)
   (sync-all-frame-windows (current-group)))
-
-(ql:quickload "clx-truetype")
 
 (defun init-fonts ()
   (xft:cache-fonts)
