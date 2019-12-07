@@ -808,7 +808,9 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
      ("s-Pause" "audio-pause")
      ("M-TAB" "cycle-windowlist")
      ("Print" "gnome-screenshot-screen")
-     ("C-Print" "gnome-screenshot-screen-select")))
+     ("C-Print" "gnome-screenshot-screen-select")
+     ("C-s-n" "pull-hidden-next")
+     ("C-s-p" "pull-hidden-previous")))
   (bind-keys
    *top-map*
    (loop
