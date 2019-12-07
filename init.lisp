@@ -68,7 +68,13 @@
 
 (defcommand emacs () ()
   "Start emacs unless it is already running, in which case focus it."
-  (run-or-raise "exec emacs" '(:class "Emacs")))
+  (run-or-raise "exec emacs --eval '(rk-start)'" '(:class "Emacs")))
+
+(defcommand 9emacs () ()
+  "Start a 9emacs profile."
+  (sh "emacs"
+      "--name=9emacs"
+      "--eval=(rk-start-9emacs)"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
