@@ -755,7 +755,6 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
         *normal-border-width* 1
         *timeout-wait* 2)
   (add-screen-mode-line-formatter #\U 'fmt-mail-biff)
-  (add-screen-mode-line-formatter #\W 'fmt-power-source)
   (sync-all-frame-windows (current-group)))
 
 (defun init-fonts ()
