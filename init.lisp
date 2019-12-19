@@ -24,6 +24,13 @@
                    (subseq ,stack 0 (1- ,max-depth))
                    ,stack))))
 
+(defun scrunch (s &key maxlen)
+  (let* ((len (- (or maxlen 6) 2))
+         (half-len (floor (/ len 2))))
+    (concat (subseq s 0 half-len)
+            ".."
+            (subseq s (- (length s) half-len)))))
+
 (defun sh* (command args &optional collect-output-p)
   (let ((cli (format nil "exec ~a ~{\"~a\"~^ ~}" command args)))
     (dformat 0 "sh*: ~a ~a~%" cli (if collect-output-p :collect-output))
@@ -575,13 +582,6 @@
     ("Emacs26" . "emacs")
     ("Emacs" . "emacs")
     ("keepassxc" . "kpass")))
-
-(defun scrunch (s &key maxlen)
-  (let* ((len (- (or maxlen 6) 2))
-         (half-len (floor (/ len 2))))
-    (concat (subseq s 0 half-len)
-            ".."
-            (subseq s (- (length s) half-len)))))
 
 (defun new-window-customizations (win)
   (let ((title-max-len 8)
