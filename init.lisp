@@ -153,7 +153,8 @@
                    (/ (reduce '+ pcts :initial-value 0)
                       (length pcts))))))))
 
-(add-screen-mode-line-formatter #\B #'fmt-bat-alt)
+(stumpwm::add-screen-mode-line-formatter #\B #'fmt-bat-alt)
+(stumpwm::add-screen-mode-line-formatter #\W 'fmt-power-source)
 
 (in-package :stumpwm)
 (ql:quickload "clx-truetype")
