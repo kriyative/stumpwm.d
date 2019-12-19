@@ -788,6 +788,7 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
      ("s-h" "hsplit")
      ("s-d" "remove")
      ("s-\\" "hsplit")
+     ("s-e" "expose")
      ("s-k" "delete")
      ("s-l" "lock-screen")
      ("s-n" "fnext")
