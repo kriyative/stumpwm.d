@@ -338,7 +338,8 @@
   (declare (ignore args))
   (toggle-mode-line (current-screen) (current-head)))
 
-(add-hook *fullscreen-hook* 'toggle-current-mode-line)
+;; (add-hook *fullscreen-hook* 'toggle-current-mode-line)
+;; (remove-hook *fullscreen-hook* 'toggle-current-mode-line)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
