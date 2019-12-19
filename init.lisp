@@ -587,20 +587,26 @@
 
 (defun new-window-customizations (win)
   (let ((title-max-len 8)
-        (title (cdr
-                (assoc (window-class win)
-                       *title-remaps*
-                       :test 'equal))))
-    (setf (window-user-title win)
-          (or title
-              (let ((title (window-title win)))
-                (cond
-                  ((and title (< title-max-len (length title)))
-                   (scrunch (string-downcase title) :maxlen title-max-len))
+        (title (or (cdr
+                    (assoc (window-title win)
+                           *title-remaps*
+                           :test 'equal))
+                   (cdr
+                    (assoc (window-class win)
+                           *title-remaps*
+                           :test 'equal)))))
+    (if (and title (or (symbolp title) (functionp title)))
+        (funcall title win)
+        (setf (window-user-title win)
+              (or title
+                  (let ((title (window-title win)))
+                    (cond
+                      ((and title (< title-max-len (length title)))
+                       (scrunch (string-downcase title) :maxlen title-max-len))
 
-                  (title title)
+                      (title title)
 
-                  (t "")))))))
+                      (t ""))))))))
 
 (add-hook *new-window-hook* 'new-window-customizations)
 
