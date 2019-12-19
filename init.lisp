@@ -81,7 +81,19 @@
   "Start a 9emacs profile."
   (sh "emacs"
       "--name=9emacs"
+      "--title=9emacs"
       "--eval=(rk-start-9emacs)"))
+
+(defun rk-customize-9emacs (win1)
+  (let* ((nt 9)
+         (nf (window-number win1))
+         (win (find-if #'(lambda (win)
+                           (= (window-number win) nt))
+                       (group-windows (current-group)))))
+    ;; Is it already taken?
+    (when win
+      (setf (window-number win) nf))
+    (setf (window-number win1) nt)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -581,6 +593,7 @@
     ("Conkeror" . "conk")
     ("Firefox" . "fox")
     ("Firefox-esr" . "fox")
+    ("9emacs" . rk-customize-9emacs)
     ("Emacs26" . "emacs")
     ("Emacs" . "emacs")
     ("keepassxc" . "kpass")))
