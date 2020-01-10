@@ -75,14 +75,11 @@
 
 (defcommand emacs () ()
   "Start emacs unless it is already running, in which case focus it."
-  (run-or-raise "exec emacs --eval '(rk-start)'" '(:class "Emacs")))
+  (run-or-raise  "exec emacs.sh --full" '(:class "Emacs")))
 
 (defcommand 9emacs () ()
   "Start a 9emacs profile."
-  (sh "emacs"
-      "--name=9emacs"
-      "--title=9emacs"
-      "--eval=(rk-start-9emacs)"))
+  (sh "emacs.sh" "--9emacs"))
 
 (defun rk-customize-9emacs (win1)
   (let* ((nt 9)
@@ -589,7 +586,7 @@
     ("ubuntu-terminal-app" . "term")
     ("urxvt" . "term")
     ("Chromium-browser" . "chromi")
-    ("Google-chrome" . "gchrom")
+    ("Google-chrome" . "chrome")
     ("Conkeror" . "conk")
     ("Firefox" . "fox")
     ("Firefox-esr" . "fox")
