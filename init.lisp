@@ -31,6 +31,11 @@
             ".."
             (subseq s (- (length s) half-len)))))
 
+(defun setenv (kvs)
+  (dolist (kv kvs)
+    (sb-posix:putenv
+     (concatenate 'string (first kv) "=" (second kv)))))
+
 (defun sh* (command args &optional collect-output-p)
   (let ((cli (format nil "exec ~a ~{\"~a\"~^ ~}" command args)))
     (dformat 0 "sh*: ~a ~a~%" cli (if collect-output-p :collect-output))
@@ -703,10 +708,14 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
   ;; (sh "dropbox" "start")
   ;; (sh "compton" "-b")
   ;; (sh "xwrits" "+breakclock" "typetime=27" "breaktime=3")
-
-  (sb-posix:putenv
-   (format nil "EMACS_SERVER_FILE=~a/.emacs.d/server/server"
-           (sb-posix:getenv "HOME")))
+  (setenv
+   `(("EMACS_SERVER_FILE" ,(format nil
+                                   "~a/.emacs.d/server/server"
+                                   (sb-posix:getenv "HOME")))
+     ;; workaround for keyboard not working in firejail'ed Chrome (or
+     ;; other gtk apps)
+     ;; https://github.com/netblue30/firejail/issues/1810#issuecomment-382586391
+     ("GTK_IM_MODULE" "xim")))
   (emacs)
   (firefox)
   (chrome))
