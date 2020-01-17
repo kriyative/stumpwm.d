@@ -706,7 +706,8 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
   ;; (clipboard-history:stop-clipboard-manager)
 
   ;; (sh "dropbox" "start")
-  ;; (sh "compton" "-b")
+  ;; this fixes screen tearing (at least on ubuntu 18.04)
+  (sh "compton" "-b")
   ;; (sh "xwrits" "+breakclock" "typetime=27" "breaktime=3")
   (setenv
    `(("EMACS_SERVER_FILE" ,(format nil
