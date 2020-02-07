@@ -262,6 +262,13 @@
   "Resize width of current frame to 75% of screen-width"
   (resize-width-pct 0.75))
 
+(defcommand resize-3way () ()
+  "Resize 3 frames as 25% | 50% | 25%"
+  (let* ((group (current-group))
+         (frames (group-frames group)))
+    (resize-frame-width-pct group (first frames) 0.25)
+    (resize-frame-width-pct group (first (last frames)) 0.25)))
+
 (defcommand (fprev tile-group) () ()
   "Cycle through the frame tree to the next frame."
   (focus-prev-frame (current-group)))
