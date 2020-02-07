@@ -232,15 +232,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun resize-width-pct (pct)
+(defun resize-frame-width-pct (group frame pct)
   (let* ((swidth (screen-width (current-screen)))
-         (twidth (round (* pct swidth)))
-         (group (current-group))
-         (frame (tile-group-current-frame group)))
+         (twidth (round (* pct swidth))))
     (resize-frame group
                   frame
                   (- twidth (frame-width frame))
                   :width)))
+
+(defun resize-width-pct (pct)
+  (let ((group (current-group)))
+    (resize-frame-width-pct group
+                            (tile-group-current-frame group)
+                            pct)))
 
 (defcommand resize-25%-width () ()
   "Resize width of current frame to 25% of screen-width"
