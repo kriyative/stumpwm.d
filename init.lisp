@@ -273,6 +273,25 @@
   "Cycle through the frame tree to the next frame."
   (focus-prev-frame (current-group)))
 
+(defcommand (swap-or-pull tile-group)
+    (n &optional (group (current-group)))
+    ((:number "Number: "))
+  "Swap current window with another in current group"
+  (let* ((cwin (group-current-window group))
+         (cframe (if cwin
+                     (window-frame cwin)
+                     (tile-group-current-frame group)))
+         (owin (find-if (lambda (win)
+                          (= (window-number win) n))
+                        (group-windows group)))
+         (oframe (window-frame owin)))
+    (when (and oframe
+               cwin
+               (not (equal oframe cframe))
+               (window-visible-p owin))
+      (pull-window cwin oframe))
+    (pull-window owin cframe)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defvar *screensaver-proc* nil)
@@ -862,8 +881,8 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
    (loop
       for i from 0 to 9
       collect (list
-               (format nil "s-C-~d" i)
-               (format nil "pull ~d" i))))
+               (format nil "C-s-~d" i)
+               (format nil "swap-or-pull ~d" i))))
   (bind-keys
    *audio-map*
    '(("n" "audio-next")
@@ -902,7 +921,14 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
      ("n" "fnext")
      ("p" "fprev")
      ("z" "suspend")
-     ("M-m" "show-message-window-messages"))))
+     ("M-m" "show-message-window-messages")))
+  (bind-keys
+   *root-map*
+   (loop
+      for i from 0 to 9
+      collect (list
+               (format nil "C-~d" i)
+               (format nil "swap-or-pull ~d" i)))))
 
 (defun start-stumpwm ()
   (ignore-errors (swank))
