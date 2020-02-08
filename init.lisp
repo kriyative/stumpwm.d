@@ -829,6 +829,8 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
      ("s-k" "delete")
      ("s-l" "lock-screen")
      ("s-n" "fnext")
+     ("s-TAB" "fnext")
+     ("s-ISO_Left_Tab" "fprev")
      ("s-o" "fother")
      ("s-p" "fprev")
      ("s-q" "send-raw-key")
