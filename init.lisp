@@ -273,6 +273,13 @@
   "Cycle through the frame tree to the next frame."
   (focus-prev-frame (current-group)))
 
+(defun find-window-by-property (pval &key property test)
+  (find-if (lambda (win)
+             (funcall (or test 'cl-ppcre:scan)
+                      pval
+                      (funcall (or property 'window-name) win)))
+           (group-windows (current-group))))
+
 (defcommand (swap-or-pull tile-group)
     (n &optional (group (current-group)))
     ((:number "Number: "))
@@ -281,16 +288,18 @@
          (cframe (if cwin
                      (window-frame cwin)
                      (tile-group-current-frame group)))
-         (owin (find-if (lambda (win)
-                          (= (window-number win) n))
-                        (group-windows group)))
-         (oframe (window-frame owin)))
+         (owin (find-window-by-property n
+                                        :property 'window-number
+                                        :test '=))
+         (oframe (when owin (window-frame owin))))
     (when (and oframe
                cwin
                (not (equal oframe cframe))
-               (window-visible-p owin))
+               (equal (frame-window oframe) owin))
       (pull-window cwin oframe))
-    (pull-window owin cframe)))
+    (if owin
+        (pull-window owin cframe)
+        (message "No such window"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
