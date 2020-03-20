@@ -80,11 +80,11 @@
 
 (defcommand emacs () ()
   "Start emacs unless it is already running, in which case focus it."
-  (run-or-raise  "exec emacs.sh --full" '(:class "Emacs")))
+  (run-or-raise  "exec emacs -f rk-start-emacs-6" '(:class "Emacs")))
 
 (defcommand 9emacs () ()
   "Start a 9emacs profile."
-  (sh "emacs.sh" "--9emacs"))
+  (sh "emacs" "-title" "9emacs" "-f" "rk-start-9emacs"))
 
 (defun rk-customize-9emacs (win1)
   (let* ((nt 9)
