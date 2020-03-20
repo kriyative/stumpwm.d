@@ -627,28 +627,24 @@
 
 (defvar *title-remaps*
   '(("Gnome-terminal" . "term")
+    ("[Cc]onsole" . "cons")
     ("ubuntu-terminal-app" . "term")
     ("urxvt" . "term")
-    ("Chromium-browser" . "chromi")
-    ("Google-chrome" . "chrome")
-    ("Conkeror" . "conk")
-    ("Firefox" . "fox")
-    ("Firefox-esr" . "fox")
+    ("[Cc]hromium-browser" . "chromi")
+    ("[Gg]oogle-chrome" . "chrome")
+    ("[Cc]onkeror" . "conk")
+    ("[Ff]irefox.*" . "fox")
     ("9emacs" . rk-customize-9emacs)
-    ("Emacs26" . "emacs")
     ("Emacs" . "emacs")
     ("keepassxc" . "kpass")))
 
+(defun remap-title (s)
+  (cdr (assoc s *title-remaps* :test 'string-match)))
+
 (defun new-window-customizations (win)
   (let ((title-max-len 8)
-        (title (or (cdr
-                    (assoc (window-title win)
-                           *title-remaps*
-                           :test 'equal))
-                   (cdr
-                    (assoc (window-class win)
-                           *title-remaps*
-                           :test 'equal)))))
+        (title (or (remap-title (window-title win))
+                   (remap-title (window-class win)))))
     (if (and title (or (symbolp title) (functionp title)))
         (funcall title win)
         (setf (window-user-title win)
