@@ -740,7 +740,7 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
   (clipboard-history:start-clipboard-manager)
   ;; (clipboard-history:stop-clipboard-manager)
 
-  ;; (sh "dropbox" "start")
+  (sh "fjdropbox")
   ;; this fixes screen tearing (at least on ubuntu 18.04)
   ;; (sh "compton" "-b")
   ;; (sh "xwrits" "+breakclock" "typetime=27" "breaktime=3")
