@@ -116,10 +116,10 @@
 (defvolcontrol amixer-Master-10- "Master" "10%-")
 (defvolcontrol amixer-Master-10+ "Master" "10%+")
 
-(in-package :stumpwm)
-(ql:quickload "notify")
-(load-module "notify")
-(notify:notify-server-toggle)
+;; (in-package :stumpwm)
+;; (ql:quickload "notify")
+;; (load-module "notify")
+;; (notify:notify-server-toggle)
 
 (load-module "clipboard-history")
 (load-module "cpu")
