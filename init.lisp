@@ -503,6 +503,10 @@
   "Launch Google Chrome"
   (sh "firejail" "google-chrome"))
 
+(defcommand chromium () ()
+  "Launch Chromium"
+  (sh "chromium-browser"))
+
 (defcommand firefox () ()
   "Launch or raise firefox"
   (run-or-raise "exec firefox" '(:class "Firefox")))
@@ -793,7 +797,7 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
      ;; https://github.com/netblue30/firejail/issues/1810#issuecomment-382586391
      ("GTK_IM_MODULE" "xim")))
   (emacs)
-  (firefox)
+  (chromium)
   (chrome))
 
 (defun set-window-background-color (win color)
