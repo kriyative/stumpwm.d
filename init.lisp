@@ -896,6 +896,7 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
      ("XF86AudioRaiseVolume" "amixer-Master-10+")
      ("S-XF86AudioRaiseVolume" "amixer-Master-1+")
      ("XF86AudioMute" "amixer-Master-toggle")
+     ("S-XF86AudioMute" "amixer-Mic-toggle")
      ("XF86AudioPlay" "audio-pause")
      ("XF86AudioStop" "audio-stop")
      ("XF86AudioPrev" "audio-previous")
