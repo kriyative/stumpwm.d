@@ -36,10 +36,13 @@
     (sb-posix:putenv
      (concatenate 'string (first kv) "=" (second kv)))))
 
+(defvar *sh-echo-console* t)
+
 (defun sh* (command args &optional collect-output-p)
   (let ((cli (format nil "exec ~a ~{\"~a\"~^ ~}" command args)))
-    (dformat 0 "sh*: ~a ~a~%" cli (if collect-output-p :collect-output))
-    (force-output)
+    (when *sh-echo-console*
+      (dformat 0 "sh*: ~a ~a~%" cli (if collect-output-p :collect-output))
+      (force-output))
     (if collect-output-p
         (apply 'run-prog-collect-output command args)
         (run-prog command :args args :wait nil))))
