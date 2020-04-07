@@ -110,7 +110,8 @@
                                 (screen-last-msg screen)
                                 nil)))
     (when sel
-      (echo-string-list screen sel))))
+      (echo-string-list screen sel)
+      (set-x-selection (format nil "~{~a~^~%~}" sel) :clipboard))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
