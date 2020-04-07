@@ -601,16 +601,11 @@
 
 (defun fmt-mail-biff-poll-unread ()
   (let* ((out (ignore-errors
-                (let ((err (make-string-output-stream)))
-                  (with-output-to-string (s)
-                    (run-prog *mu-cmd*
-                              :args '("find"
-                                      "flag:unread"
-                                      "-f" "m	f	s"
-                                      "-u")
-                              :error err
-                              :output s
-                              :wait t)))))
+                (sh< *mu-cmd*
+                     "find"
+                     "flag:unread"
+                     "-f" "m	f	s"
+                     "-u")))
          (msgs (unless (string-equal "" out)
                  (mapcar (lambda (msg)
                            (split-string msg "	"))
