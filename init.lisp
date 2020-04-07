@@ -679,7 +679,8 @@
     ("[Ff]irefox.*" . "fox")
     ("9emacs" . rk-customize-9emacs)
     ("Emacs" . "emacs")
-    ("keepassxc" . "kpass")))
+    ("keepassxc" . "kpass")
+    ("KeePassXC" . "kpass")))
 
 (defun remap-title (s)
   (cdr (assoc s *title-remaps* :test 'string-match)))
@@ -710,7 +711,7 @@
     ("C-p"   . "Up")))
 
 (define-remapped-keys
-    `(("(.*[Cc]hrom|[Ff]irefox|[Ee]vince|keepassxc|libreoffice)"
+    `(("(.*[Cc]hrom|[Ff]irefox|[Ee]vince|keepassxc|KeePassXC|libreoffice)"
        ,@*default-remapped-keys*
        ("C-a"   . "Home")
        ("C-e"   . "End")
