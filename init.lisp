@@ -160,6 +160,11 @@
 
 ;; (fmt-audio-state nil)
 
+(in-package :stumpwm)
+(ql:quickload "notify")
+(load-module "notify")
+(notify:notify-server-toggle)
+
 (load-module "clipboard-history")
 (load-module "cpu")
 (load-module "mem")
