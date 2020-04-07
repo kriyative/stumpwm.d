@@ -38,20 +38,20 @@
 
 (defvar *sh-echo-console* t)
 
-(defun sh* (command args &optional collect-output-p)
-  (let ((cli (format nil "exec ~a ~{\"~a\"~^ ~}" command args)))
-    (when *sh-echo-console*
-      (dformat 0 "sh*: ~a ~a~%" cli (if collect-output-p :collect-output))
-      (force-output))
-    (if collect-output-p
-        (apply 'run-prog-collect-output command args)
-        (run-prog command :args args :wait nil))))
+(defun sh* (command args &optional collect-output-p wait-p)
+  (when *sh-echo-console*
+    (let ((cli (format nil "exec ~a ~{\"~a\"~^ ~}" command args)))
+      (dformat 0 "sh*: ~a~%" cli)
+      (force-output)))
+  (if collect-output-p
+      (apply 'run-prog-collect-output command args)
+      (sb-ext:run-program command args :search t :wait wait-p)))
 
 (defun sh (command &rest args)
   (sh* command args))
 
 (defun sh< (command &rest args)
-  (sh* command args t))
+  (sh* command args t t))
 
 (define-stumpwm-type :shell (input prompt)
   (declare (ignore prompt))
