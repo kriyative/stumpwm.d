@@ -129,38 +129,36 @@
   level)
 
 (defun get-audio-info (control)
-  (let* ((stumpwm::*sh-echo-console* nil)
-         (output (stumpwm::sh< "amixer"
-                               "-D" *default-device*
-                               "sget" control)))
-    (multiple-value-bind (str matches)
-        (cl-ppcre:scan-to-strings ".*\\[([0-9]+)%\\].*\\[(on|off)\\]\\n" output)
-      (declare (ignore str))
-      (make-audio-info :name control
-                       :state (aref matches 1)
-                       :level (or (ignore-errors
-                                    (read-from-string (aref matches 0)))
-                                  0)))))
+  (or (ignore-errors
+        (let ((output (stumpwm::sh< "amixer"
+                                    "-D" *default-device*
+                                    "sget" control)))
+          (multiple-value-bind (str matches)
+              (cl-ppcre:scan-to-strings ".*\\[([0-9]+)%\\].*\\[(on|off)\\]\\n"
+                                        output)
+            (declare (ignore str))
+            (make-audio-info :name control
+                             :state (aref matches 1)
+                             :level (or (ignore-errors
+                                          (read-from-string (aref matches 0)))
+                                        0)))))
+      "Err"))
 
 (defun fmt-audio-state (ml)
   (declare (ignore ml))
-  (handler-case
-      (let ((*default-device* "pulse")
-            (master (get-audio-info "Master"))
-            (mic (get-audio-info "Capture")))
-        (format nil
-                "~A~A"
-                (if (equal "off" (audio-info-state master))
-                    "^B^1*SPK:-^*^b"
-                    (format nil "SPK:~A%" (audio-info-level master)))
-                (if (equal "off" (audio-info-state mic))
-                    " ^B^1*MIC:-^*^b"
-                    "")))
-    (condition (x)
-      (dformat 0 "~S" x)
-      "AUD: err")))
+  (let ((*default-device* "pulse")
+        (master (get-audio-info "Master"))
+        (mic (get-audio-info "Capture")))
+    (format nil
+            "~A~A"
+            (if (equal "off" (audio-info-state master))
+                "^B^1*SPK:-^*^b"
+                (format nil "SPK:~A%" (audio-info-level master)))
+            (if (equal "off" (audio-info-state mic))
+                " ^B^1*MIC:-^*^b"
+                ""))))
 
-(stumpwm::add-screen-mode-line-formatter #\A 'fmt-audio-state)
+;; (fmt-audio-state nil)
 
 (load-module "clipboard-history")
 (load-module "cpu")
