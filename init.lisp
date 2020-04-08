@@ -879,6 +879,7 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
      ("s-e" "expose")
      ("s-k" "delete")
      ("s-l" "lock-screen")
+     ("s-m" "amixer-Mic-toggle")
      ("s-n" "fnext")
      ("s-TAB" "fnext")
      ("s-ISO_Left_Tab" "fprev")
@@ -943,7 +944,8 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
      ("p" "audio-previous")
      ("d" "set-audio-profile")
      ("C-d" "set-audio-profile")
-     ("SPC" "audio-pause")))
+     ("SPC" "audio-pause")
+     ("m" "amixer-Mic-toggle")))
   (bind-keys
    *ctlx-map*
    '(("0" "remove")
