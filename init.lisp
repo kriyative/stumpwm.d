@@ -686,6 +686,9 @@
 
 ;; (fmt-mail-biff 0)
 
+(defcached fmt-mail-biff-cached () (ml)
+  (fmt-mail-biff ml))
+
 (defcommand rk-show-biff-unread () ()
   "Show list of unread messages"
   (if (zerop (length *fmt-mail-biff-unread*))
