@@ -45,7 +45,13 @@
       (dformat 0 "sh*: ~a~%" cli)
       (force-output)))
   (if collect-output-p
-      (apply 'run-prog-collect-output command args)
+      (with-output-to-string (s)
+        (sb-ext:run-program command
+                            args
+                            :search t
+                            :wait t
+                            :output s
+                            :error nil))
       (sb-ext:run-program command args :search t :wait wait-p)))
 
 (defun sh (command &rest args)
