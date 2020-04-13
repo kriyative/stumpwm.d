@@ -36,7 +36,8 @@
     (sb-posix:putenv
      (concatenate 'string (first kv) "=" (second kv)))))
 
-(defvar *sh-echo-console* t)
+(defvar *sh-echo-console* nil)
+;; (setq *sh-echo-console* t)
 
 (defun sh* (command args &optional collect-output-p wait-p)
   (when *sh-echo-console*
