@@ -883,7 +883,8 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
                                           (if (ignore-errors (truename "Mail"))
                                               "| %U | "
                                               "")
-                                          "%C| %M"
+                                          " | %a"
+                                          " | %C| %M"
                                           " | %W: %B"
                                           " | %I"
                                           " | %d")
