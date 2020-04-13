@@ -66,6 +66,32 @@
     (or (argument-pop-rest input)
         (completing-read (current-screen) prompt 'complete-program))))
 
+(defun mksym (&rest parts)
+  (intern
+   (apply 'concat
+          (mapcar (lambda (p) (string-upcase (princ-to-string p))) parts))))
+
+(defvar *cache-sentinel-value* (gensym "STUMPWM-SENTINEL"))
+(defmacro defcached (name opts args &body body)
+  (let ((last-time# (gensym))
+        (val# (gensym))
+        (now# (gensym)))
+    (destructuring-bind (&key timeout)
+        opts
+      (let ((timeout (or timeout 15)))
+        `(let ((,last-time# 0)
+               (,val# nil))
+           (defun ,name ,args
+             (let ((,now# (get-unix-time)))
+               (when (or (eq *cache-sentinel-value* ,val#)
+                         (<= ,timeout (- ,now# ,last-time#)))
+                 (dformat 1 "~&~S cache expired~%" ',name)
+                 (setq ,last-time# ,now#
+                       ,val# (progn ,@body)))
+               ,val#))
+           (defun ,(mksym name "-reset!") ()
+             (setq ,val# *cache-sentinel-value*)))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defvar audio-profile-choices
@@ -165,7 +191,17 @@
                 " ^B^1*MIC:-^*^b"
                 ""))))
 
+(stumpwm::defcached fmt-audio-state-cached () (ml)
+  (fmt-audio-state ml))
+
 ;; (fmt-audio-state nil)
+;; (fmt-audio-state-cached nil)
+
+(defcommand toggle-mic () ()
+  "Toggle on/off the active microphone"
+  (amixer-mic-toggle)
+  (fmt-audio-state-cached-reset!)
+  (stumpwm::update-mode-lines (current-screen)))
 
 (in-package :stumpwm)
 (ql:quickload "notify")
@@ -188,6 +224,9 @@
           "online"))
       "AC"
       "BAT"))
+
+(stumpwm::defcached fmt-power-source-cached () (ml)
+  (fmt-power-source ml))
 
 (defun fmt-bat-alt (ml)
   (if (equal "BAT" (fmt-power-source ml))
@@ -218,8 +257,14 @@
                    (/ (reduce '+ pcts :initial-value 0)
                       (length pcts))))))))
 
-(stumpwm::add-screen-mode-line-formatter #\B #'fmt-bat-alt)
-(stumpwm::add-screen-mode-line-formatter #\W 'fmt-power-source)
+;; (fmt-power-source nil)
+;; (fmt-bat-alt nil)
+
+(stumpwm::defcached fmt-bat-alt-cached () (ml)
+  (fmt-bat-alt ml))
+
+(stumpwm::add-screen-mode-line-formatter #\B 'fmt-bat-alt-cached)
+(stumpwm::add-screen-mode-line-formatter #\W 'fmt-power-source-cached)
 
 (in-package :stumpwm)
 (ql:quickload "clx-truetype")
@@ -848,8 +893,9 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
         *input-window-gravity* :center
         *window-border-style* :thin
         *normal-border-width* 1
-        *timeout-wait* 2)
-  (add-screen-mode-line-formatter #\U 'fmt-mail-biff)
+        *timeout-wait* 5)
+  (add-screen-mode-line-formatter #\U 'fmt-mail-biff-cached)
+  (add-screen-mode-line-formatter #\a 'amixer::fmt-audio-state-cached)
   (sync-all-frame-windows (current-group)))
 
 (defun init-fonts ()
