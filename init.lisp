@@ -204,9 +204,12 @@
   (stumpwm::update-mode-lines (current-screen)))
 
 (in-package :stumpwm)
+
 (ql:quickload "notify")
 (load-module "notify")
 (notify:notify-server-toggle)
+(setq notify::*notify-server-title-color* "^3"
+      notify::*notify-server-body-color* "^B^7")
 
 (load-module "clipboard-history")
 (load-module "cpu")
