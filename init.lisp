@@ -219,7 +219,7 @@
 (defun fmt-power-source (ml)
   (declare (ignore ml))
   (if (= 1
-         (sysfs-int-field-or-nil
+         (sysfs-int-field
           "/sys/class/power_supply/AC/"
           "online"))
       "AC"
@@ -236,13 +236,13 @@
                  (if (string= (sysfs-field path "present")
                               "0")
                      0
-                     (let* ((curr (or (sysfs-int-field-or-nil path "energy_now")
+                     (let* ((curr (or (sysfs-int-field path "energy_now")
                                       ;; energy_* seems not to be there on
                                       ;; some boxes. Strange...
-                                      (sysfs-int-field-or-nil path "charge_now")
+                                      (sysfs-int-field path "charge_now")
                                       (return-from fmt-bat-alt :unknown)))
-                            (full (or (sysfs-int-field-or-nil path "energy_full")
-                                      (sysfs-int-field-or-nil path "charge_full")
+                            (full (or (sysfs-int-field path "energy_full")
+                                      (sysfs-int-field path "charge_full")
                                       (return-from fmt-bat-alt :unknown)))
                             (percent (* 100 (/ curr full))))
                        (round percent))))))
