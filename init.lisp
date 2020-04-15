@@ -177,30 +177,35 @@
                                         0)))))
       "Err"))
 
-(defun fmt-audio-state (ml)
-  (declare (ignore ml))
+(defvar *fmt-audio-state* nil)
+(defun update-fmt-audio-state ()
   (let ((*default-device* "pulse")
         (master (get-audio-info "Master"))
         (mic (get-audio-info "Capture")))
-    (format nil
-            "~A~A"
-            (if (equal "off" (audio-info-state master))
-                "^B^1*SPK:-^*^b"
-                (format nil "SPK:~A%" (audio-info-level master)))
-            (if (equal "off" (audio-info-state mic))
-                " ^B^1*MIC:-^*^b"
-                ""))))
+    (setq *fmt-audio-state*
+          (format nil
+                  "~A~A"
+                  (if (equal "off" (audio-info-state master))
+                      "^B^1*SPK:-^*^b"
+                      (format nil "SPK:~A%" (audio-info-level master)))
+                  (if (equal "off" (audio-info-state mic))
+                      " ^B^1*MIC:-^*^b"
+                      "")))))
 
-(stumpwm::defcached fmt-audio-state-cached () (ml)
-  (fmt-audio-state ml))
+;; (update-fmt-audio-state)
 
-;; (fmt-audio-state nil)
+(defun fmt-audio-state-cached (ml)
+  (declare (ignore ml))
+  (unless *fmt-audio-state*
+    (update-fmt-audio-state))
+  *fmt-audio-state*)
+
 ;; (fmt-audio-state-cached nil)
 
 (defcommand toggle-mic () ()
   "Toggle on/off the active microphone"
   (amixer-mic-toggle)
-  (fmt-audio-state-cached-reset!)
+  (update-fmt-audio-state)
   (stumpwm::update-mode-lines (current-screen)))
 
 (in-package :stumpwm)
