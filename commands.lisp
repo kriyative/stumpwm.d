@@ -227,7 +227,15 @@
 
 (defcommand chromium () ()
   "Launch Chromium"
-  (sh "chromium-browser"))
+  (let ((browser (or (string-not-empty
+                      (string-trim '(#\space #\newline)
+                                   (sh< "which" "chromium-browser")))
+                     (string-not-empty
+                      (string-trim '(#\space #\newline)
+                                   (sh< "which" "chromium"))))))
+    (if browser
+        (sh browser)
+        (message "No candidate found for chromium browser"))))
 
 (defcommand firefox () ()
   "Launch or raise firefox"

@@ -18,6 +18,7 @@
     ("ubuntu-terminal-app" . "term")
     ("urxvt" . "term")
     ("[Cc]hromium-browser" . "chromi")
+    ("[Cc]hromium" . "chromi")
     ("[Gg]oogle-chrome" . "chrome")
     ("[Cc]onkeror" . "conk")
     ("[Ff]irefox.*" . "fox")
