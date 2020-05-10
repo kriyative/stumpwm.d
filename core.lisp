@@ -125,3 +125,7 @@
 
 (defun time-dow-shortname-2ch ()
   (subseq (time-dow-name) 0 2))
+
+(defun string-not-empty (s)
+  (when (and (stringp s) (< 0 (length s)))
+    s))
