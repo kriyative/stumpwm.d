@@ -2,6 +2,80 @@
 
 (setq *print-case* :downcase)
 
+(defmacro bind (clauses &body body)
+  "This macro combines the behaviour of the forms `let*',
+`destructuring-bind', and `multiple-value-bind', permitting the
+following style of binding form:
+
+  (bind (((:values m n) (values 10 20))
+         ((a b _c &key (d 10)) '(1 2 3))
+         (x 5))
+    (+ x a b d m n))
+  => 48
+
+Note in the destructuring form (a b _c &key (d 10)), _c is a short form
+for declaring it as ignorable.
+
+This is a more limited and lightweight implementation of some ideas from
+metabang-bind (http://common-lisp.net/project/metabang-bind/)."
+  (labels
+      ((parse-arglist (args)
+         (loop
+            for arg in args
+            collect arg into args
+            when (and (symbolp arg) (eq (aref (symbol-name arg) 0) #\_))
+            collect arg into ignorables
+            finally (return (values args ignorables))))
+       (cons-form (form args clauses body)
+         (multiple-value-bind (arglist ignorables)
+             (parse-arglist args)
+           `(,form ,arglist
+                   ,@(cdar clauses)
+                   ,@(when ignorables `((declare ,(list* 'ignore ignorables))))
+                   (bind ,(cdr clauses) ,@body)))))
+    (cond
+      ((null clauses) `(progn ,@body))
+      ((listp (caar clauses))
+       (cond
+         ((eq (caaar clauses) :values)
+          (cons-form 'multiple-value-bind (cdaar clauses) clauses body))
+         ((eq (caaar clauses) :slots)
+          `(with-slots ,(cdaar clauses) ,@(cdar clauses)
+             (bind ,(cdr clauses) ,@body)))
+         (t
+          (cons-form 'destructuring-bind (caar clauses) clauses body))))
+      (t
+       `(let (,(car clauses))
+          (bind ,(cdr clauses) ,@body))))))
+
+(defmacro -> (x &rest args)
+  "A Common-Lisp implementation of the Clojure `thrush` operator."
+  (destructuring-bind (form &rest more)
+      args
+    (cond
+      (more `(-> (-> ,x ,form) ,@more))
+      ((and (consp form)
+            (or (eq (car form) 'lambda)
+                (eq (car form) 'function)))
+       `(funcall ,form ,x))
+      ((consp form) `(,(car form) ,x ,@(cdr form)))
+      (form `(,form ,x))
+      (t x))))
+
+(defmacro ->> (x &rest args)
+  "A Common-Lisp implementation of the Clojure `thrush` operator."
+  (destructuring-bind (form &rest more)
+      args
+    (cond
+      (more `(->> (->> ,x ,form) ,@more))
+      ((and (consp form)
+            (or (eq (car form) 'lambda)
+                (eq (car form) 'function)))
+       `(funcall ,form ,x))
+      ((consp form) `(,(car form) ,@(cdr form) ,x))
+      (form `(,form ,x))
+      (t x))))
+
 (defvar *unix-epoch-difference*
   (encode-universal-time 0 0 0 1 1 1970 0))
 
