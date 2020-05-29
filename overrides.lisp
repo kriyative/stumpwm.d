@@ -188,3 +188,36 @@
          (bright (lookup-color screen *mode-line-foreground-color*)))
     (adjust-color bright *mode-line-brightness*)
     (setf (ccontext-default-bright cc) (alloc-color screen bright))))
+
+;; group.lisp
+
+(defun move-window-to-group (window to-group)
+  (unless (equalp to-group (window-group window))
+    (labels ((really-move-window (window to-group)
+               (unless (eq (window-group window) to-group)
+                 (hide-window window)
+                 ;; house keeping
+                 (setf (group-windows (window-group window))
+                       (remove window (group-windows (window-group window))))
+                 (group-delete-window (window-group window) window)
+                 (setf (window-group window) to-group
+                       (window-number window) (find-free-window-number to-group))
+                 (push window (group-windows to-group))
+                 (xlib:change-property (window-xwin window) :_NET_WM_DESKTOP
+                                       (list (netwm-group-id to-group))
+                                       :cardinal 32)
+                 (group-add-window to-group window))))
+      ;; When a modal window is moved, all the windows it shadows must be moved
+      ;; as well. When a shadowed window is moved, the modal shadowing it must
+      ;; be moved.
+      (cond
+        ((window-modal-p window)
+         (mapc (lambda (w)
+                 (really-move-window w to-group))
+               (append (list window) (shadows-of window))))
+        ((modals-of window)
+         (mapc (lambda (w)
+                 (move-window-to-group w to-group))
+               (modals-of window)))
+        (t
+         (really-move-window window to-group))))))
