@@ -68,6 +68,8 @@
 (defcached fmt-mail-biff-cached () (ml)
   (fmt-mail-biff ml))
 
+(stumpwm:add-screen-mode-line-formatter #\U 'fmt-mail-biff-cached)
+
 (defcommand rk-show-biff-unread () ()
   "Show list of unread messages"
   (if (zerop (length *fmt-mail-biff-unread*))

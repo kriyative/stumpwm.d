@@ -61,6 +61,8 @@
 
 ;; (fmt-audio-state-cached nil)
 
+(stumpwm::add-screen-mode-line-formatter #\a 'fmt-audio-state-cached)
+
 (in-package :stumpwm)
 
 (defvar audio-profile-choices nil)

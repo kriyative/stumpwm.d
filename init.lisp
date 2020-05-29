@@ -94,7 +94,7 @@
 					  ;; "^B%v^b"
                                           "^>"
                                           (if (ignore-errors (truename "Mail"))
-                                              "| %U | "
+                                              "| %U"
                                               "")
                                           " | %a"
                                           " | %C| %M"
@@ -115,8 +115,6 @@
         *window-border-style* :thin
         *normal-border-width* 1
         *timeout-wait* 5)
-  (add-screen-mode-line-formatter #\U 'fmt-mail-biff-cached)
-  (add-screen-mode-line-formatter #\a 'amixer::fmt-audio-state-cached)
   (sync-all-frame-windows (current-group)))
 
 (defun init-keybindings ()
