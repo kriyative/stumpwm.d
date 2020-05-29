@@ -229,10 +229,10 @@
   "Launch Chromium"
   (let ((browser (or (string-not-empty
                       (string-trim '(#\space #\newline)
-                                   (sh< "which" "chromium-browser")))
+                                   (sh< "which" "chromium")))
                      (string-not-empty
                       (string-trim '(#\space #\newline)
-                                   (sh< "which" "chromium"))))))
+                                   (sh< "which" "chromium-browser"))))))
     (if browser
         (sh browser)
         (message "No candidate found for chromium browser"))))
