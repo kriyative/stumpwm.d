@@ -298,12 +298,20 @@
   (sh "xrandr" "--output" "eDP1" "--mode" "1920x1080" "--output" "DP2-2" "--off"))
 
 (defcommand gnome-screenshot-screen () ()
-  "Take a screenshot of whole screen"
+  "Take a screenshot of whole screen with gnome-screenshot"
   (sh "gnome-screenshot"))
 
 (defcommand gnome-screenshot-screen-select () ()
-  "Take a screenshot of selected portion of screen"
+  "Take a screenshot of selected portion of screen with gnome-screenshot"
   (sh "gnome-screenshot" "-a"))
+
+(defcommand scrot-screenshot-screen () ()
+  "Take a screenshot of whole screen with scrot"
+  (sh "scrot" "-e" "mv $f ~/Pictures/"))
+
+(defcommand scrot-screenshot-screen-select () ()
+  "Take a screenshot of selected portion of screen with scrot"
+  (sh "scrot" "-s" "-e" "mv $f ~/Pictures/"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

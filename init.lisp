@@ -68,7 +68,7 @@
   ;; (clipboard-history:stop-clipboard-manager)
 
   (sh "fjdropbox")
-  ;; this fixes screen tearing (at least on ubuntu 18.04)
+  ;; this fixes screen tearing (at least on debian buster)
   ;; (sh "compton" "-b")
   ;; (sh "xwrits" "+breakclock" "typetime=27" "breaktime=3")
   (setenv
@@ -181,8 +181,8 @@
      ("s-Down" "ratrelwarp 0 10")
      ("s-Pause" "audio-pause")
      ("M-TAB" "cycle-windowlist")
-     ("Print" "gnome-screenshot-screen")
-     ("C-Print" "gnome-screenshot-screen-select")
+     ("Print" "scrot-screenshot-screen")
+     ("C-Print" "scrot-screenshot-screen-select")
      ("C-s-n" "pull-hidden-next")
      ("C-s-p" "pull-hidden-previous")))
   (bind-keys
