@@ -36,28 +36,37 @@
   '(("C-n"   . "Down")
     ("C-p"   . "Up")))
 
+(defun concat-re (&rest exprs)
+  (format nil "(~{~A~^|~})" exprs))
+
 (define-remapped-keys
-    `(("(.*[Cc]hrom|[Ff]irefox|[Ee]vince|keepassxc|KeePassXC|libreoffice)"
-       ,@*default-remapped-keys*
-       ("C-a"   . "Home")
-       ("C-e"   . "End")
-       ("C-f"   . "Right")
-       ("C-b"   . "Left")
-       ("C-v"   . "Next")
-       ("M-b"   . "C-Left")
-       ("M-f"   . "C-Right")
-       ("M-v"   . "Prior")
-       ("M-w"   . "C-c")
-       ("C-w"   . "C-x")
-       ("C-y"   . "C-v")
-       ("M-<"   . "C-Home")
-       ("M->"   . "C-End")
-       ("C-M-b" . "M-Left")
-       ("C-M-f" . "M-Right")
-       ("C-k"   . ("S-End" "C-x"))
-       ("M-k"   . "C-k")
-       ("C-d"   . "Delete")
-       ("M-d"   . ("S-C-Right" "Delete")))))
+    `((,(concat-re
+         ".*[Cc]hrom"
+         "[Ff]irefox"
+         "[Ee]vince"
+         "keepassxc|KeePassXC"
+         "libreoffice"
+         "Signal")
+        ,@*default-remapped-keys*
+        ("C-a"   . "Home")
+        ("C-e"   . "End")
+        ("C-f"   . "Right")
+        ("C-b"   . "Left")
+        ("C-v"   . "Next")
+        ("M-b"   . "C-Left")
+        ("M-f"   . "C-Right")
+        ("M-v"   . "Prior")
+        ("M-w"   . "C-c")
+        ("C-w"   . "C-x")
+        ("C-y"   . "C-v")
+        ("M-<"   . "C-Home")
+        ("M->"   . "C-End")
+        ("C-M-b" . "M-Left")
+        ("C-M-f" . "M-Right")
+        ("C-k"   . ("S-End" "C-x"))
+        ("M-k"   . "C-k")
+        ("C-d"   . "Delete")
+        ("M-d"   . ("S-C-Right" "Delete")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
