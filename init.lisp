@@ -76,7 +76,7 @@
   (clipboard-history:start-clipboard-manager)
   ;; (clipboard-history:stop-clipboard-manager)
 
-  (sh "fjdropbox")
+  (sh "fjdropbox" "start")
   ;; this fixes screen tearing (at least on debian buster)
   ;; (sh "compton" "-b")
   ;; (sh "xwrits" "+breakclock" "typetime=27" "breaktime=3")
