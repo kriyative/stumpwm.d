@@ -35,11 +35,11 @@
 
 (defun fmt-mail-biff-poll-unread ()
   (let* ((out (ignore-errors
-                (sh< *mu-cmd*
-                     "find"
-                     "flag:unread"
-                     "-f" "m	f	s"
-                     "-u")))
+               (sh< *mu-cmd*
+                    "find"
+                    "flag:unread"
+                    "-f" "m	f	s"
+                    "-u")))
          (msgs (unless (string-equal "" out)
                  (mapcar (lambda (msg)
                            (split-string msg "	"))
