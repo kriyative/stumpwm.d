@@ -12,7 +12,7 @@
 (notify:notify-server-toggle)
 
 (defun rk--show-notification (app icon summary body)
-  (let ((stumpwm::*message-window-gravity* :bottom))
+  (let ((stumpwm::*message-window-gravity* :bottom-right))
     (notify::show-notification app
                                icon
                                (format nil
