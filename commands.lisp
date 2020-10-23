@@ -6,7 +6,7 @@
 
 (defcommand emacs () ()
   "Start emacs unless it is already running, in which case focus it."
-  (run-or-raise  "exec emacs -f rk-start-emacs-6" '(:class "Emacs")))
+  (sh "emacs" "-f" "rk-start-emacs-6"))
 
 (defcommand 9emacs () ()
   "Start a 9emacs profile."
