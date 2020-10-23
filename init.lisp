@@ -96,6 +96,7 @@
   (pushnew '(#\q time-dow-shortname-2ch)
            *time-format-string-alist*)
   (setq *window-format* "%m%n%s%10t"
+        *window-menulist-format* "%m%n%s %c (%20t)"
         ;; *time-modeline-string* "%a %b %e %H:%M"
         *time-modeline-string* "%q %m-%e %H:%M"
         *screen-mode-line-format* (concat "%3n |"
