@@ -33,7 +33,7 @@
                           (dump-group (current-group))
                           *group-stack-max-depth*)
           (ignore-errors
-            (restore-group (current-group) gdump)))
+           (restore-group (current-group) gdump)))
         (message "Can't go back anymore"))))
 
 (defcommand frame-undo () ()
@@ -47,7 +47,7 @@
         (progn
           (push-group)
           (ignore-errors
-            (restore-group (current-group) gdump)))
+           (restore-group (current-group) gdump)))
         (message "Can't go forward anymore"))))
 
 (defcommand frame-redo () ()

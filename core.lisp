@@ -21,11 +21,11 @@ metabang-bind (http://common-lisp.net/project/metabang-bind/)."
   (labels
       ((parse-arglist (args)
          (loop
-            for arg in args
-            collect arg into args
-            when (and (symbolp arg) (eq (aref (symbol-name arg) 0) #\_))
-            collect arg into ignorables
-            finally (return (values args ignorables))))
+           for arg in args
+           collect arg into args
+           when (and (symbolp arg) (eq (aref (symbol-name arg) 0) #\_))
+             collect arg into ignorables
+           finally (return (values args ignorables))))
        (cons-form (form args clauses body)
          (multiple-value-bind (arglist ignorables)
              (parse-arglist args)

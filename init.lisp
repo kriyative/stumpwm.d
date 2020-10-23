@@ -105,7 +105,7 @@
                                           "^>"
                                           (if (ignore-errors (truename "Mail"))
                                               "| %U"
-                                            "")
+                                              "")
                                           " | %a"
                                           " | %C| %M"
                                           " | %W: %B"

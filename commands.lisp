@@ -88,12 +88,12 @@
 
 (defcommand (swap-or-pull tile-group)
     (n &optional (group (current-group)))
-    ((:number "Number: "))
+  ((:number "Number: "))
   "Swap current window with another in current group"
   (let* ((cwin (group-current-window group))
          (cframe (if cwin
                      (window-frame cwin)
-                   (tile-group-current-frame group)))
+                     (tile-group-current-frame group)))
          (owin (find-window-by-property n
                                         :property 'window-number
                                         :test '=))
@@ -105,7 +105,7 @@
       (pull-window cwin oframe))
     (if owin
         (pull-window owin cframe)
-      (message "No such window"))))
+        (message "No such window"))))
 
 (defvar *screensaver-proc* nil)
 
@@ -235,7 +235,7 @@
                                    (sh< "which" "chromium-browser"))))))
     (if browser
         (sh browser)
-      (message "No candidate found for chromium browser"))))
+        (message "No candidate found for chromium browser"))))
 
 (defcommand firefox () ()
   "Launch or raise firefox"
@@ -339,16 +339,16 @@
                    (remap-title (window-class win)))))
     (if (and title (or (symbolp title) (functionp title)))
         (funcall title win)
-      (setf (window-user-title win)
-            (or title
-                (let ((title (window-title win)))
-                  (cond
-                    ((and title (< title-max-len (length title)))
-                     (scrunch (string-downcase title) :maxlen title-max-len))
+        (setf (window-user-title win)
+              (or title
+                  (let ((title (window-title win)))
+                    (cond
+                      ((and title (< title-max-len (length title)))
+                       (scrunch (string-downcase title) :maxlen title-max-len))
 
-                    (title title)
+                      (title title)
 
-                    (t ""))))))))
+                      (t ""))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -374,7 +374,7 @@ selected."
 (defvar *window-menulist-format* *window-format*)
 
 (defcommand cycle-windowlist (&optional (fmt *window-menulist-format*)
-                              window-list) (:rest)
+                                        window-list) (:rest)
   "Allow the user to select a window from the list of windows and focus the
 selected window. For information of menu bindings see @ref{Menus}. The optional
  argument @var{fmt} can be specified to override the default window formatting.
@@ -386,7 +386,7 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
   (if-let ((window-list (or window-list
                             (sort-windows-by-number
                              (group-windows (current-group))))))
-      (if-let ((window (select-window-from-menu-1 window-list fmt)))
-          (group-focus-window (current-group) window)
-        (throw 'error :abort))
-    (message "No Managed Windows")))
+          (if-let ((window (select-window-from-menu-1 window-list fmt)))
+                  (group-focus-window (current-group) window)
+                  (throw 'error :abort))
+          (message "No Managed Windows")))

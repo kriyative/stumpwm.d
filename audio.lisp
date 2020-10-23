@@ -22,18 +22,18 @@
 
 (defun get-audio-info (control)
   (or (ignore-errors
-        (let ((output (stumpwm::sh< "amixer"
-                                    "-D" *default-device*
-                                    "sget" control)))
-          (multiple-value-bind (str matches)
-              (cl-ppcre:scan-to-strings ".*\\[([0-9]+)%\\].*\\[(on|off)\\]\\n"
-                                        output)
-            (declare (ignore str))
-            (make-audio-info :name control
-                             :state (aref matches 1)
-                             :level (or (ignore-errors
-                                          (read-from-string (aref matches 0)))
-                                        0)))))
+       (let ((output (stumpwm::sh< "amixer"
+                                   "-D" *default-device*
+                                   "sget" control)))
+         (multiple-value-bind (str matches)
+             (cl-ppcre:scan-to-strings ".*\\[([0-9]+)%\\].*\\[(on|off)\\]\\n"
+                                       output)
+           (declare (ignore str))
+           (make-audio-info :name control
+                            :state (aref matches 1)
+                            :level (or (ignore-errors
+                                        (read-from-string (aref matches 0)))
+                                       0)))))
       "Err"))
 
 (defvar *fmt-audio-state* nil)
@@ -67,11 +67,11 @@
 
 (defvar audio-profile-choices nil)
 (setq audio-profile-choices
-  '(("internal" "internal")
-    ;; ("bt-a2dp" "bt-a2dp")
-    ;; ("bt-headset" "bt-headset")
-    ("hyperx" "hyperx")
-    ("display-port" "dp")))
+      '(("internal" "internal")
+        ;; ("bt-a2dp" "bt-a2dp")
+        ;; ("bt-headset" "bt-headset")
+        ("hyperx" "hyperx")
+        ("display-port" "dp")))
 
 (defcommand set-audio-profile () ()
   "Prompt with the list of audio profiles"

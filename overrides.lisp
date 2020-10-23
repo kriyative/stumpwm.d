@@ -41,17 +41,17 @@
                                       (car compls))))))
              (key-loop ()
                (loop for key = (read-key-or-selection) do
-                    (cond ((stringp key)
-                           ;; handle selection
-                           (input-insert-string input key)
-                           (draw-input-bucket screen prompt input))
-                          ;; skip modifiers
-                          ((is-modifier (car key)))
-                          ((process-input screen prompt input (car key) (cdr key))
-                           (if (or (not require-match)
-                                   (match-input))
-                               (return (input-line-string input))
-                               (draw-input-bucket screen prompt input "[No match]" t)))))))
+                 (cond ((stringp key)
+                        ;; handle selection
+                        (input-insert-string input key)
+                        (draw-input-bucket screen prompt input))
+                       ;; skip modifiers
+                       ((is-modifier (car key)))
+                       ((process-input screen prompt input (car key) (cdr key))
+                        (if (or (not require-match)
+                                (match-input))
+                            (return (input-line-string input))
+                            (draw-input-bucket screen prompt input "[No match]" t)))))))
       (setup-input-window screen prompt input)
       (catch :abort
         (unwind-protect
@@ -76,9 +76,9 @@
                      (make-string (length line-content) :initial-element #\*)
                      line-content))
          (string-width (loop for char across string
-                          summing (text-line-width (screen-font screen)
-                                                   (string char)
-                                                   :translate #'translate-id)))
+                             summing (text-line-width (screen-font screen)
+                                                      (string char)
+                                                      :translate #'translate-id)))
          (space-width  (text-line-width (screen-font screen) " "    :translate #'translate-id))
          (tail-width   (text-line-width (screen-font screen) tail   :translate #'translate-id))
          (full-string-width (+ string-width space-width))
@@ -100,51 +100,51 @@
 
       ;; Display the input window text.
       (loop for i from 0 below prompt-lines-length
-         if (< i prompt-lines-length)
-         do (draw-image-glyphs win gcontext font
-                               *message-window-padding*
-                               (prompt-text-y i font *message-window-y-padding*)
-                               (nth i prompt-lines)
-                               :translate #'translate-id
-                               :size 16))
+            if (< i prompt-lines-length)
+              do (draw-image-glyphs win gcontext font
+                                    *message-window-padding*
+                                    (prompt-text-y i font *message-window-y-padding*)
+                                    (nth i prompt-lines)
+                                    :translate #'translate-id
+                                    :size 16))
       ;; Pad the input to the left.
       (loop with x = (+ *message-window-padding* prompt-offset)
-         for char across string
-         for i from 0 below (length string)
-         for char-width = (text-line-width (screen-font screen) (string char) :translate #'translate-id)
-         if (= pos i)
-         do (xlib:with-gcontext (gcontext :foreground (xlib:gcontext-background gcontext)
-                                          :background (xlib:gcontext-foreground gcontext))
-              (draw-image-glyphs win gcontext (screen-font screen)
-                                 x
-                                 (prompt-text-y (1- prompt-lines-length)
-                                                font
-                                                *message-window-y-padding*)
-                                 (string char)
-                                 :translate #'translate-id
-                                 :size 16))
-         else
-         do (draw-image-glyphs win gcontext (screen-font screen)
-                               x
-                               (prompt-text-y (1- prompt-lines-length)
-                                              font
-                                              *message-window-y-padding*)
-                               (string char)
-                               :translate #'translate-id
-                               :size 16)
-         end
-         do (incf x char-width)
-         finally (when (>= pos (length string))
-                   (xlib:with-gcontext (gcontext :foreground (xlib:gcontext-background gcontext)
-                                                 :background (xlib:gcontext-foreground gcontext))
-                     (draw-image-glyphs win gcontext (screen-font screen)
-                                        x
-                                        (prompt-text-y (1- prompt-lines-length)
-                                                       font
-                                                       *message-window-y-padding*)
-                                        " "
-                                        :translate #'translate-id
-                                        :size 16))))
+            for char across string
+            for i from 0 below (length string)
+            for char-width = (text-line-width (screen-font screen) (string char) :translate #'translate-id)
+            if (= pos i)
+              do (xlib:with-gcontext (gcontext :foreground (xlib:gcontext-background gcontext)
+                                               :background (xlib:gcontext-foreground gcontext))
+                   (draw-image-glyphs win gcontext (screen-font screen)
+                                      x
+                                      (prompt-text-y (1- prompt-lines-length)
+                                                     font
+                                                     *message-window-y-padding*)
+                                      (string char)
+                                      :translate #'translate-id
+                                      :size 16))
+            else
+              do (draw-image-glyphs win gcontext (screen-font screen)
+                                    x
+                                    (prompt-text-y (1- prompt-lines-length)
+                                                   font
+                                                   *message-window-y-padding*)
+                                    (string char)
+                                    :translate #'translate-id
+                                    :size 16)
+            end
+            do (incf x char-width)
+            finally (when (>= pos (length string))
+                      (xlib:with-gcontext (gcontext :foreground (xlib:gcontext-background gcontext)
+                                                    :background (xlib:gcontext-foreground gcontext))
+                        (draw-image-glyphs win gcontext (screen-font screen)
+                                           x
+                                           (prompt-text-y (1- prompt-lines-length)
+                                                          font
+                                                          *message-window-y-padding*)
+                                           " "
+                                           :translate #'translate-id
+                                           :size 16))))
       (draw-image-glyphs win gcontext (screen-font screen)
                          (+ *message-window-padding* prompt-offset full-string-width space-width)
                          (prompt-text-y (1- prompt-lines-length)
@@ -175,7 +175,7 @@
                                  env))))
     (sb-posix:putenv "_JAVA_AWT_WM_NONREPARENTING=1")
     (apply #'sb-ext:run-program prog args :output (if output output t) :search t
-           :error (if error error t) :wait wait :environment env opts)))
+                                          :error (if error error t) :wait wait :environment env opts)))
 
 
 ;; mode-line.lisp

@@ -6,21 +6,21 @@
 (defun mbsync-parse (output)
   (let (mboxes mbox)
     (loop for row in (split-string output)
-       do
-         (multiple-value-bind (s m)
-             (cl-ppcre:scan-to-strings "Opening master box ([^.]+)..." row)
-           (declare (ignore s))
-           (if m
-               (setq mbox (aref m 0))
-               (multiple-value-bind (s m)
-                   (cl-ppcre:scan-to-strings "master: ([0-9]+) messages, ([0-9]+) recent"
-                                             row)
-                 (declare (ignore s))
-                 (when m
-                   (push (list mbox
-                               (parse-integer (aref m 0))
-                               (parse-integer (aref m 1)))
-                         mboxes))))))
+          do
+             (multiple-value-bind (s m)
+                 (cl-ppcre:scan-to-strings "Opening master box ([^.]+)..." row)
+               (declare (ignore s))
+               (if m
+                   (setq mbox (aref m 0))
+                   (multiple-value-bind (s m)
+                       (cl-ppcre:scan-to-strings "master: ([0-9]+) messages, ([0-9]+) recent"
+                                                 row)
+                     (declare (ignore s))
+                     (when m
+                       (push (list mbox
+                                   (parse-integer (aref m 0))
+                                   (parse-integer (aref m 1)))
+                             mboxes))))))
     mboxes))
 
 (defun mbsync (mb)
@@ -49,8 +49,8 @@
         mb-spec
       (push (bt:make-thread (lambda ()
                               (loop
-                                 until (eq :exit *mbsync-state*)
-                                 do
+                                until (eq :exit *mbsync-state*)
+                                do
                                    (mbsync mb)
                                    (sleep timeout))
                               (dformat 0 "~&exiting ~a~%" (bt:current-thread)))
