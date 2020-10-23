@@ -276,6 +276,10 @@
 
 ;; (capslock-as-hyper)
 
+(defun setup-rollermouse ()
+  "Configure the sensitivity of a rollermouse"
+  (sh< "xinput" "set-prop" "22" "libinput Accel Speed" "-1"))
+
 (defcommand capslock-as-control () ()
   "Make CapsLock a Control key"
   (sh "setxkbmap" "-option" "ctrl:nocaps"))

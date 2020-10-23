@@ -261,6 +261,7 @@
   (set-root-window-background-color 0)
   (init-mouse-pointer)
   (setup-touchpad)
+  (setup-rollermouse)
   (%grename "A" (current-group))
   (start-apps))
 
