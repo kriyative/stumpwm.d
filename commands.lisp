@@ -294,9 +294,48 @@
       "-e" "clear mod4"
       "-e" "add mod4 = Super_L"
       "-e" "add mod4 = Super_R"))
+
+(defun parse-xinput-devices (&optional output)
+  (let ((output (or output (sh< "xinput")))
+        devices)
+    (loop for row in (split-string output)
+          do
+             (multiple-value-bind (s matches)
+                 (cl-ppcre:scan-to-strings
+                  "^[^a-zA-Z]*(.*)id=([0-9]*).*(master|slave)[ ]*(pointer|keyboard)"
+                  row)
+               (declare (ignore s))
+               (when matches
+                 (push (list
+                        (make-keyword (string-upcase (aref matches 3)))
+                        (make-keyword (string-upcase (aref matches 2)))
+                        (string-trim '(#\Space #\Tab) (aref matches 0))
+                        (aref matches 1))
+                       devices))))
+    devices))
+
+;; (parse-xinput-devices x)
+
+(defvar xinput-devices nil)
+(defun find-xinput-device (type name)
+  (find-if (lambda (device)
+             (and (eq type (nth 0 device))
+                  (equal name (nth 2 device))))
+           (or xinput-devices
+               (setq xinput-devices (parse-xinput-devices)))))
+
+;; (find-xinput-device :pointer "Contour Design RollerMouse Re:d")
+
+(defun find-xinput-device-id (type name)
+  (nth 3 (find-xinput-device type name)))
+
 (defun setup-rollermouse ()
   "Configure the sensitivity of a rollermouse"
-  (sh< "xinput" "set-prop" "22" "libinput Accel Speed" "-1"))
+  (sh< "xinput" "set-prop"
+       (find-xinput-device-id :pointer "Contour Design RollerMouse Re:d")
+       "libinput Accel Speed" "-1"))
+
+;; (setup-rollermouse)
 
 (defcommand capslock-as-control () ()
   "Make CapsLock a Control key"
