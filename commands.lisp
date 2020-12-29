@@ -88,7 +88,7 @@
 
 (defcommand (swap-or-pull tile-group)
     (n &optional (group (current-group)))
-  ((:number "Number: "))
+    ((:number "Number: "))
   "Swap current window with another in current group"
   (let* ((cwin (group-current-window group))
          (cframe (if cwin
@@ -431,7 +431,7 @@ selected."
 (defvar *window-menulist-format* *window-format*)
 
 (defcommand cycle-windowlist (&optional (fmt *window-menulist-format*)
-                                        window-list) (:rest)
+                              window-list) (:rest)
   "Allow the user to select a window from the list of windows and focus the
 selected window. For information of menu bindings see @ref{Menus}. The optional
  argument @var{fmt} can be specified to override the default window formatting.
