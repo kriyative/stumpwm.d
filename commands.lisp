@@ -276,6 +276,24 @@
 
 ;; (capslock-as-hyper)
 
+(defcommand f24-as-hyper () ()
+  "Make F24 a Hyper key"
+  (sh "setxkbmap" "-option" "")
+  ;; (sh "setxkbmap" "-option" "ctrl:ralt_rctrl")
+  (sh "xmodmap"
+      "-e" "remove mod4 = Hyper_L"
+      "-e" "keycode 202 = Hyper_L"
+      "-e" "clear mod3"
+      "-e" "add mod3 = Hyper_L"))
+
+(defcommand enable-super () ()
+  "Enable a Super key"
+  (sh "xmodmap"
+      "-e" "keycode 133 = Super_L"
+      "-e" "keycode 134 = Super_R"
+      "-e" "clear mod4"
+      "-e" "add mod4 = Super_L"
+      "-e" "add mod4 = Super_R"))
 (defun setup-rollermouse ()
   "Configure the sensitivity of a rollermouse"
   (sh< "xinput" "set-prop" "22" "libinput Accel Speed" "-1"))
