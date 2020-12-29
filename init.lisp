@@ -258,6 +258,7 @@
   (init-keybindings)
   (capslock-as-control)
   ;; (capslock-as-hyper)
+  (f24-as-hyper)
   (set-root-window-background-color 0)
   (init-mouse-pointer)
   (setup-touchpad)
