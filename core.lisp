@@ -203,3 +203,22 @@ metabang-bind (http://common-lisp.net/project/metabang-bind/)."
 (defun string-not-empty (s)
   (when (and (stringp s) (< 0 (length s)))
     s))
+
+(defun basic-focus-window (window &optional raise)
+  "Change currently focused window similar to STUMPWM:FOCUS-WINDOW,
+but without triggering hooks or mode-line updates."
+  (declare (ignore raise))
+  (let* ((group (window-group window))
+         (screen (group-screen group)))
+    (screen-set-focus screen window)
+    (setf (group-current-window group) window)))
+
+(defmacro with-basic-window-focus (win &body body)
+  "Temporarily change window focus to WIN and evaluate BODY."
+  (let ((cwin% (gensym)))
+    `(let ((,cwin% (current-window))
+           (*suppress-frame-indicator* t))
+       (basic-focus-window ,win)
+       (unwind-protect
+            (progn ,@body)
+         (basic-focus-window ,cwin%)))))
