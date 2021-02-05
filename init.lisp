@@ -199,17 +199,17 @@
   (bind-keys
    *top-map*
    (loop
-     for i from 0 to 9
-     collect (list
-              (format nil "s-~d" i)
-              (format nil "select-window-by-number ~d" i))))
+      for i from 0 to 9
+      collect (list
+               (format nil "s-~d" i)
+               (format nil "select-window-by-number ~d" i))))
   (bind-keys
    *top-map*
    (loop
-     for i from 0 to 9
-     collect (list
-              (format nil "C-s-~d" i)
-              (format nil "swap-or-pull ~d" i))))
+      for i from 0 to 9
+      collect (list
+               (format nil "C-s-~d" i)
+               (format nil "swap-or-pull ~d" i))))
   (bind-keys
    *root-map*
    '(("C-q" "send-raw-key")
@@ -232,10 +232,10 @@
   (bind-keys
    *root-map*
    (loop
-     for i from 0 to 9
-     collect (list
-              (format nil "C-~d" i)
-              (format nil "swap-or-pull ~d" i)))))
+      for i from 0 to 9
+      collect (list
+               (format nil "C-~d" i)
+               (format nil "swap-or-pull ~d" i)))))
 
 (defun start-stumpwm ()
   (ignore-errors (swank))
