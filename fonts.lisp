@@ -1,6 +1,8 @@
 (in-package :stumpwm)
 
 ;; (ql:quickload "archives/clx-truetype")
+(push (merge-pathnames "common-lisp/" (user-homedir-pathname))
+      asdf:*central-registry*)
 (asdf:load-system "clx-truetype")
 (load-module "ttf-fonts")
 
@@ -11,8 +13,8 @@
   ;; (clx-truetype:get-font-families)
   ;; (clx-truetype:get-font-subfamilies "DejaVu Sans Mono")
   ;; (clx-truetype:get-font-subfamilies "Noto Mono")
-  (let ((fonts '((:family "DejaVu Sans Mono" :subfamily "Book" :size 13)
-                 (:family "Noto Mono" :subfamily "Regular" :size 13))))
+  (let ((fonts '((:family "DejaVu Sans Mono" :subfamily "Book" :size 12)
+                 (:family "Noto Mono" :subfamily "Regular" :size 12))))
     (set-font (mapcar (lambda (font)
                         (apply 'make-instance 'xft:font font))
                       fonts))))
