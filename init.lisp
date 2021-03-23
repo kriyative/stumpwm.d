@@ -89,7 +89,7 @@
      ;; https://github.com/netblue30/firejail/issues/1810#issuecomment-382586391
      ("GTK_IM_MODULE" "xim")))
   (emacs)
-  ;; (chrome)
+  (chrome)
   ;; (chromium)
   (firefox))
 
@@ -153,10 +153,12 @@
      ("s-l" "lock-screen")
      ("s-m" "toggle-mic")
      ("s-n" "fnext")
+     ("M-s-n" "gnext")
      ("s-TAB" "fnext")
      ("s-ISO_Left_Tab" "fprev")
      ("s-o" "fother")
      ("s-p" "fprev")
+     ("M-s-p" "gprev")
      ("s-q" "send-raw-key")
      ("s-r" "remove")
      ("s-s" "vsplit")
@@ -167,6 +169,7 @@
      ("s-y" "show-clipboard-history")
      ("s-SPC" "audio-pause")
      ("s-F6" "resize-3way")
+     ("s-P" "pull")
      ("XF86AudioLowerVolume" "amixer-Master-10-")
      ("S-XF86AudioLowerVolume" "amixer-Master-1-")
      ("XF86AudioRaiseVolume" "amixer-Master-10+")
@@ -228,7 +231,9 @@
      ("n" "fnext")
      ("p" "fprev")
      ("z" "suspend")
-     ("M-m" "show-message-window-messages")))
+     ("M-m" "show-message-window-messages")
+     ("M" "ytv-toggle-mute")
+     ("P" "pull")))
   (bind-keys
    *root-map*
    (loop
@@ -258,8 +263,8 @@
   (gnome-settings-daemon)
   (init-keybindings)
   (capslock-as-control)
-  ;; (capslock-as-hyper)
   (f24-as-hyper)
+  ;; (capslock-as-hyper)
   (set-root-window-background-color 0)
   (init-mouse-pointer)
   (setup-touchpad)
@@ -267,4 +272,5 @@
   (%grename "A" (current-group))
   (start-apps))
 
-(start-stumpwm)
+(let ((*sh-echo-console* t))
+  (start-stumpwm))
