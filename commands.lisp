@@ -17,7 +17,7 @@
          (nf (window-number win1))
          (win (find-if #'(lambda (win)
                            (= (window-number win) nt))
-                       (group-windows (current-group)))))
+                        (group-windows (current-group)))))
     ;; Is it already taken?
     (when win
       (setf (window-number win) nf))
@@ -139,7 +139,7 @@
 
 (defcommand lock-screen () ()
   "Lock the screen, and power down the display"
-  (sh "xset" "dpms" "force" "off")
+  (sh "xset" "dpms" "force" "standby")
   (sleep 1)
   (sh "xscreensaver-command" "-lock"))
 
@@ -262,6 +262,12 @@
       "PalmDetect=1")
   (sb-posix:putenv "GDK_CORE_DEVICE_EVENTS=1"))
 
+(defcommand capslock-as-control () ()
+  "Make CapsLock a Control key"
+  (sh "setxkbmap" "-option" "ctrl:nocaps"))
+
+;; (capslock-as-control)
+
 (defcommand capslock-as-hyper () ()
   "Make CapsLock a Hyper key"
   (sh "setxkbmap" "-option" "")
@@ -278,13 +284,13 @@
 
 (defcommand f24-as-hyper () ()
   "Make F24 a Hyper key"
-  (sh "setxkbmap" "-option" "")
-  ;; (sh "setxkbmap" "-option" "ctrl:ralt_rctrl")
   (sh "xmodmap"
       "-e" "remove mod4 = Hyper_L"
       "-e" "keycode 202 = Hyper_L"
       "-e" "clear mod3"
       "-e" "add mod3 = Hyper_L"))
+
+;; (f24-as-hyper)
 
 (defcommand enable-super () ()
   "Enable a Super key"
@@ -316,15 +322,14 @@
 
 ;; (parse-xinput-devices x)
 
-(defvar xinput-devices nil)
 (defun find-xinput-device (type name)
   (find-if (lambda (device)
              (and (eq type (nth 0 device))
                   (equal name (nth 2 device))))
-           (or xinput-devices
-               (setq xinput-devices (parse-xinput-devices)))))
+           (parse-xinput-devices)))
 
 ;; (find-xinput-device :pointer "Contour Design RollerMouse Re:d")
+;; (find-xinput-device :keyboard "Contour Design RollerMouse Re:d")
 
 (defun find-xinput-device-id (type name)
   (nth 3 (find-xinput-device type name)))
@@ -337,15 +342,14 @@
 
 ;; (setup-rollermouse)
 
-(defcommand capslock-as-control () ()
-  "Make CapsLock a Control key"
-  (sh "setxkbmap" "-option" "ctrl:nocaps"))
-
-;; (capslock-as-control)
-
 (defun init-mouse-pointer ()
   (sh "xsetroot" "-cursor_name" "left_ptr")
   (sh "xinput" "-set-ptr-feedback" "11" "0" "1" "16"))
+
+(defun setup-bluetooth-mouse ()
+  (sh< "xinput" "set-prop"
+       (find-xinput-device-id :pointer "Bluetooth Laser Travel Mouse Mouse")
+       "libinput Accel Speed" "-1"))
 
 (defcommand gnome-settings-daemon () ()
   "Run the gnome-settings-daemon"
@@ -447,3 +451,12 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
                   (group-focus-window (current-group) window)
                   (throw 'error :abort))
           (message "No Managed Windows")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defcommand ytv-toggle-mute () ()
+  (with-basic-window-focus
+      (find-window-by-property "YouTube TV"
+                               :property 'window-title
+                               :test 'cl-ppcre:scan)
+    (send-fake-key (current-window) (parse-key "M-m"))))
