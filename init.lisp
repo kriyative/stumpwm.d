@@ -1,6 +1,10 @@
+(setf *load-path* nil)
+(init-load-path *module-dir*)
+
 (load ".stumpwm.d/overrides.lisp")
 (load ".stumpwm.d/core.lisp")
 (load ".stumpwm.d/swank.lisp")
+(ignore-errors (swank))
 (load ".stumpwm.d/audio.lisp")
 (load ".stumpwm.d/commands.lisp")
 (load ".stumpwm.d/windmove.lisp")
@@ -270,7 +274,9 @@
   (setup-touchpad)
   (setup-rollermouse)
   (%grename "A" (current-group))
-  (start-apps))
+  (let ((start-appsp (getenv "STUMPWM_START_APPS")))
+    (when (and start-appsp (equal "t" start-appsp))
+      (start-apps))))
 
 (let ((*sh-echo-console* t))
   (start-stumpwm))
