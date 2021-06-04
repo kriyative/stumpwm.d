@@ -93,8 +93,8 @@
      ;; https://github.com/netblue30/firejail/issues/1810#issuecomment-382586391
      ("GTK_IM_MODULE" "xim")))
   (emacs)
-  (chrome)
-  ;; (chromium)
+  ;; (chrome)
+  (chromium)
   (firefox))
 
 (defun init-vars ()
