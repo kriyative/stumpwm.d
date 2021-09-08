@@ -125,7 +125,7 @@ metabang-bind (http://common-lisp.net/project/metabang-bind/)."
                             :search t
                             :wait t
                             :output s
-                            :error nil))
+                            :error s))
       (sb-ext:run-program command args :search t :wait wait-p)))
 
 (defun sh (command &rest args)
