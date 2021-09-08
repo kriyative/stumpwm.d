@@ -334,7 +334,7 @@
 (defun find-xinput-device-id (type name)
   (nth 3 (find-xinput-device type name)))
 
-(defun setup-rollermouse ()
+(defun setup-rollermouse* ()
   "Configure the sensitivity of a rollermouse"
   (sh< "xinput" "set-prop"
        (find-xinput-device-id :pointer "Contour Design RollerMouse Re:d")
@@ -342,14 +342,20 @@
 
 ;; (setup-rollermouse)
 
+(defcommand setup-rollermouse () ()
+  (setup-rollermouse*))
+
 (defun init-mouse-pointer ()
   (sh "xsetroot" "-cursor_name" "left_ptr")
   (sh "xinput" "-set-ptr-feedback" "11" "0" "1" "16"))
 
-(defun setup-bluetooth-mouse ()
+(defun setup-bluetooth-mouse* ()
   (sh< "xinput" "set-prop"
        (find-xinput-device-id :pointer "Bluetooth Laser Travel Mouse Mouse")
        "libinput Accel Speed" "-1"))
+
+(defcommand setup-bluetooth-mouse () ()
+  (setup-bluetooth-mouse*))
 
 (defcommand gnome-settings-daemon () ()
   "Run the gnome-settings-daemon"
