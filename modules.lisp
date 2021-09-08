@@ -52,9 +52,11 @@
                     "-f" "m	f	s"
                     "-u")))
          (msgs (unless (string-equal "" out)
-                 (mapcar (lambda (msg)
-                           (split-string msg "	"))
-                         (split-string out)))))
+                 (->> (split-string out)
+                      (remove-if (lambda (msg)
+                                   (cl-ppcre:scan "^error: " msg)))
+                      (mapcar (lambda (msg)
+                                (split-string msg "	")))))))
     (setq *fmt-mail-biff-unread*
           (remove-if (lambda (msg)
                        (cl-ppcre:scan "All Mail" (first msg)))
@@ -71,7 +73,7 @@
             (if (positive-integer-p cnt)
                 "^B^3*~A:~D^*^b"
                 "~A:~D")
-            "✉"
+            "M"
             (length msgs))))
 
 ;; (fmt-mail-biff 0)
