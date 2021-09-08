@@ -9,7 +9,7 @@
 (load ".stumpwm.d/commands.lisp")
 (load ".stumpwm.d/windmove.lisp")
 (load ".stumpwm.d/modules.lisp")
-(load ".stumpwm.d/fonts.lisp")
+;; (load ".stumpwm.d/fonts.lisp")
 (load ".stumpwm.d/ctrlx.lisp")
 
 (in-package :stumpwm)
@@ -81,6 +81,8 @@
   ;; (clipboard-history:stop-clipboard-manager)
 
   (sh "fjdropbox" "start")
+  (sh "syncthing" "-no-browser" "-logfile=var/log/syncthing.log")
+  (sh "run_keybase" "-g")
   ;; this fixes screen tearing (at least on debian buster)
   ;; (sh "compton" "-b")
   ;; (sh "xwrits" "+breakclock" "typetime=27" "breaktime=3")
@@ -257,7 +259,7 @@
   (set-win-bg-color "white")
   (set-focus-color "green")
   (set-msg-border-width 1)
-  (init-fonts)
+  ;; (init-fonts)
   (toggle-current-mode-line)
   ;; set window-class property of mode-lines - used by compton
   (dolist (m *mode-lines*)
