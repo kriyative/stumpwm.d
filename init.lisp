@@ -74,15 +74,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun safe-sh (&rest args)
+  (handler-case
+      (apply 'sh args)
+    (condition (c)
+      (message "^B^1sh error: ~a" c))))
+
 (defun start-apps ()
   (redshift-on)
   (start-screen-saver)
   (clipboard-history:start-clipboard-manager)
   ;; (clipboard-history:stop-clipboard-manager)
 
-  (sh "fjdropbox" "start")
-  (sh "syncthing" "-no-browser" "-logfile=var/log/syncthing.log")
-  (sh "run_keybase" "-g")
+  (safe-sh "fjdropbox" "start")
+  (safe-sh "syncthing" "-no-browser" "-logfile=var/log/syncthing.log")
+  (safe-sh "run_keybase" "-g")
   ;; this fixes screen tearing (at least on debian buster)
   ;; (sh "compton" "-b")
   ;; (sh "xwrits" "+breakclock" "typetime=27" "breaktime=3")
