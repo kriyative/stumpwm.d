@@ -357,6 +357,16 @@
 (defcommand setup-bluetooth-mouse () ()
   (setup-bluetooth-mouse*))
 
+(defun setup-logitech-mx-ergo* ()
+  (sh< "xinput" "set-prop"
+       (find-xinput-device-id :pointer "Logitech MX Ergo")
+       "libinput Accel Speed" "-1"))
+
+;; (setup-logitech-mx-ergo*)
+
+(defcommand setup-logitech-mx-ergo () ()
+  (setup-logitech-mx-ergo*))
+
 (defcommand gnome-settings-daemon () ()
   "Run the gnome-settings-daemon"
   (sh "/usr/lib/gnome-settings-daemon/gsd-xsettings"))
