@@ -86,6 +86,7 @@
   (clipboard-history:start-clipboard-manager)
   ;; (clipboard-history:stop-clipboard-manager)
 
+  (safe-sh "xsettingsd")
   (safe-sh "fjdropbox" "start")
   (safe-sh "syncthing" "-no-browser" "-logfile=var/log/syncthing.log")
   (safe-sh "run_keybase" "-g")
@@ -272,7 +273,6 @@
     (xlib:set-wm-class (mode-line-window m)
                        "StumpwmModeline"
                        "stumpwm-modeline"))
-  (gnome-settings-daemon)
   (init-keybindings)
   (capslock-as-control)
   (f24-as-hyper)

@@ -123,24 +123,26 @@
       (fmt-bat ml)
       (flet ((battery-levels (battery)
                (let ((path (path-of battery)))
-                 (if (string= (sysfs-field path "present")
-                              "0")
-                     0
-                     (let* ((curr (or (sysfs-int-field path "energy_now")
-                                      ;; energy_* seems not to be there on
-                                      ;; some boxes. Strange...
-                                      (sysfs-int-field path "charge_now")
-                                      (return-from fmt-bat-alt :unknown)))
-                            (full (or (sysfs-int-field path "energy_full")
-                                      (sysfs-int-field path "charge_full")
-                                      (return-from fmt-bat-alt :unknown)))
-                            (percent (* 100 (/ curr full))))
-                       (round percent))))))
-        (let ((pcts (mapcar #'battery-levels
-                            (all-batteries
-                             (or (preferred-battery-method)
-                                 (return-from fmt-bat-alt
-                                   "(not implemented)"))))))
+                 (ignore-errors
+                  (if (string= (sysfs-field path "present")
+                               "0")
+                      0
+                      (let* ((curr (or (sysfs-int-field path "energy_now")
+                                       ;; energy_* seems not to be there on
+                                       ;; some boxes. Strange...
+                                       (sysfs-int-field path "charge_now")
+                                       (return-from fmt-bat-alt :unknown)))
+                             (full (or (sysfs-int-field path "energy_full")
+                                       (sysfs-int-field path "charge_full")
+                                       (return-from fmt-bat-alt :unknown)))
+                             (percent (* 100 (/ curr full))))
+                        (round percent)))))))
+        (let ((pcts (remove nil
+                            (mapcar #'battery-levels
+                                    (all-batteries
+                                     (or (preferred-battery-method)
+                                         (return-from fmt-bat-alt
+                                           "(not implemented)")))))))
           (format nil
                   "~D%"
                   (round
