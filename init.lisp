@@ -3,8 +3,9 @@
 
 (load ".stumpwm.d/overrides.lisp")
 (load ".stumpwm.d/core.lisp")
-(load ".stumpwm.d/swank.lisp")
-(ignore-errors (swank))
+(ignore-errors
+ (load ".stumpwm.d/swank.lisp")
+ (swank))
 (load ".stumpwm.d/audio.lisp")
 (load ".stumpwm.d/commands.lisp")
 (load ".stumpwm.d/windmove.lisp")
