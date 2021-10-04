@@ -351,7 +351,7 @@
 
 (defun setup-bluetooth-mouse* ()
   (sh< "xinput" "set-prop"
-       (find-xinput-device-id :pointer "Bluetooth Laser Travel Mouse Mouse")
+       (find-xinput-device-id :pointer "Bluetooth Laser Travel Mouse")
        "libinput Accel Speed" "-1"))
 
 (defcommand setup-bluetooth-mouse () ()
