@@ -94,14 +94,6 @@
   ;; this fixes screen tearing (at least on debian buster)
   ;; (sh "compton" "-b")
   ;; (sh "xwrits" "+breakclock" "typetime=27" "breaktime=3")
-  (setenv
-   `(("EMACS_SERVER_FILE" ,(format nil
-                                   "~a/.emacs.d/server/server"
-                                   (sb-posix:getenv "HOME")))
-     ;; workaround for keyboard not working in firejail'ed Chrome (or
-     ;; other gtk apps)
-     ;; https://github.com/netblue30/firejail/issues/1810#issuecomment-382586391
-     ("GTK_IM_MODULE" "xim")))
   (emacs)
   ;; (chrome)
   (chromium)
@@ -140,7 +132,15 @@
         *window-border-style* :thin
         *normal-border-width* 1
         *timeout-wait* 5)
-  (sync-all-frame-windows (current-group)))
+  (sync-all-frame-windows (current-group))
+  (setenv
+   `(("EMACS_SERVER_FILE" ,(format nil
+                                   "~a/.emacs.d/server/server"
+                                   (sb-posix:getenv "HOME")))
+     ;; workaround for keyboard not working in firejail'ed Chrome (or
+     ;; other gtk apps)
+     ;; https://github.com/netblue30/firejail/issues/1810#issuecomment-382586391
+     ("GTK_IM_MODULE" "xim"))))
 
 (defun init-keybindings ()
   (bind-keys
