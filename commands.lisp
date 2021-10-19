@@ -476,3 +476,6 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
                                :property 'window-title
                                :test 'cl-ppcre:scan)
     (send-fake-key (current-window) (parse-key "M-m"))))
+
+(defcommand switch-display () ()
+  (sh "set-display" "auto"))

@@ -212,7 +212,8 @@
      ("Print" "scrot-screenshot-screen")
      ("C-Print" "scrot-screenshot-screen-select")
      ("C-s-n" "pull-hidden-next")
-     ("C-s-p" "pull-hidden-previous")))
+     ("C-s-p" "pull-hidden-previous")
+     ("s-RET" "switch-display")))
   (bind-keys
    *top-map*
    (loop
