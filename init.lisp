@@ -96,8 +96,9 @@
   ;; (sh "xwrits" "+breakclock" "typetime=27" "breaktime=3")
   (emacs)
   ;; (chrome)
-  (chromium)
-  (firefox))
+  ;; (chromium)
+  (firefox)
+  )
 
 (defun init-vars ()
   (pushnew '(#\q time-dow-shortname-2ch)
