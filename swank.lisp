@@ -1,7 +1,7 @@
 (in-package :stumpwm)
 
 ;; ;; load Swank so we can connect with SLIME
-(load ".emacs.d/el-get/slime/swank-loader.lisp")
+(load ".emacs.d/elpa/slime-20230730.1734/swank-loader.lisp")
 (swank-loader:init)
 (defvar *swank-p* nil)
 

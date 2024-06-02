@@ -13,7 +13,7 @@
 (defvolcontrol amixer-Master-10+ "Master" "10%+")
 (defvolcontrol amixer-Mic-toggle "Capture" "toggle")
 
-(setq *default-device* "pulse")
+(setq *default-device* "default")
 
 (defstruct audio-info
   name

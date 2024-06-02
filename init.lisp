@@ -1,15 +1,34 @@
-(setf *load-path* nil)
+#-quicklisp
+(let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
+                                       (user-homedir-pathname))))
+  (when (probe-file quicklisp-init)
+    (load quicklisp-init)))
+
+(setq *load-path* nil
+      cl-user::*on-package-variance* nil
+      *module-dir* (merge-pathnames ".stumpwm.d/modules" (user-homedir-pathname)))
 (init-load-path *module-dir*)
+
+(require "asdf")
+(require "sb-posix")
+
+;; (let ((contrib (merge-pathnames ".nix-profile/lib/sbcl/contrib/"
+;;                                 (user-homedir-pathname))))
+;;   (push contrib asdf:*central-registry*)
+;;   (load (merge-pathnames "sb-rotate-byte.asd" contrib)))
+(require "sb-rotate-byte")
+
+(push (merge-pathnames "common-lisp/" (user-homedir-pathname))
+      asdf:*central-registry*)
 
 (load ".stumpwm.d/overrides.lisp")
 (load ".stumpwm.d/core.lisp")
-(ignore-errors
- (load ".stumpwm.d/swank.lisp")
- (swank))
+(load ".stumpwm.d/swank.lisp")
 (load ".stumpwm.d/audio.lisp")
 (load ".stumpwm.d/commands.lisp")
 (load ".stumpwm.d/windmove.lisp")
 (load ".stumpwm.d/modules.lisp")
+(load ".stumpwm.d/notify.lisp")
 ;; (load ".stumpwm.d/fonts.lisp")
 (load ".stumpwm.d/ctrlx.lisp")
 
@@ -260,7 +279,7 @@
                (format nil "swap-or-pull ~d" i)))))
 
 (defun start-stumpwm ()
-  (ignore-errors (swank))
+  (swank)
   (init-vars)
   (set-normal-gravity :top)
   (set-transient-gravity :center)

@@ -5,56 +5,27 @@
 (load-module "mem")
 (load-module "wifi")
 
-;;;;;;;;;;;;;;;; notify customizations ;;;;;;;;;;;;;;;;
-
-(ql:quickload "notify")
-(load-module "notify")
-(notify:notify-server-toggle)
-
-(defvar *rk--show-notifications-p* t)
-
-(defun rk--show-notification (app icon summary body)
-  (when *rk--show-notifications-p*
-    (let ((stumpwm::*message-window-gravity* :bottom-right))
-      (notify::show-notification app
-                                 icon
-                                 (format nil
-                                         "[~A] ~A"
-                                         (time-format *time-modeline-string*)
-                                         summary)
-                                 body))))
-
-(setq notify::*notify-server-title-color* "^3"
-      notify::*notify-server-body-color* "^B^7"
-      notify::*notification-received-hook* '(stumpwm::rk--show-notification))
-
-(defcommand rk-mute-notifications () ()
-  "Do not display notifications popups"
-  (setq *rk--show-notifications-p* nil))
-
-(defcommand rk-show-notifications () ()
-  "Display notifications popups"
-  (setq *rk--show-notifications-p* t))
+;;;;;;;;;;;;;;;; mu4e-mail-biff ;;;;;;;;;;;;;;;;
 
 (in-package :stumpwm)
 
-;;;;;;;;;;;;;;;; mu4e-mail-biff ;;;;;;;;;;;;;;;;
-
-(defvar *mu-cmd* "./.emacs.d/el-get/mu4e/mu/mu")
+(defvar *mu-cmd* "./.emacs.d/straight/repos/mu/build/mu/mu")
+;; (setq *mu-cmd* "./.emacs.d/straight/repos/mu/build/mu/mu")
 
 (defvar *fmt-mail-biff-unread* nil)
 
 (defun fmt-mail-biff-poll-unread ()
   (let* ((out (ignore-errors
-               (sh< *mu-cmd*
-                    "find"
-                    "flag:unread"
-                    "-f" "m	f	s"
-                    "-u")))
+                (sh< *mu-cmd*
+                     "find"
+                     "-f" "m	f	s"
+                     "-u"
+                     "-q"
+                     "flag:unread")))
          (msgs (unless (string-equal "" out)
                  (->> (split-string out)
                       (remove-if (lambda (msg)
-                                   (cl-ppcre:scan "^error: " msg)))
+                                   (cl-ppcre:scan "^(error:|no matches) " msg)))
                       (mapcar (lambda (msg)
                                 (split-string msg "	")))))))
     (setq *fmt-mail-biff-unread*
