@@ -111,6 +111,7 @@
                                           "%v"
 					  ;; "^B%v^b"
                                           "^>"
+                                          "%T"
                                           (if (ignore-errors (truename "Mail"))
                                               "| %U"
                                               "")

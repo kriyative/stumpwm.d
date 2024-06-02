@@ -6,7 +6,7 @@
 
 (defcommand emacs () ()
   "Start emacs unless it is already running, in which case focus it."
-  (sh "emacs" "-f" "rk-start-emacs-6"))
+  (sh "emacs"))
 
 (defcommand 9emacs () ()
   "Start a 9emacs profile."
@@ -392,7 +392,7 @@
 
 (defcommand scrot-screenshot-screen-select () ()
   "Take a screenshot of selected portion of screen with scrot"
-  (sh "scrot" "-s" "-e" "mv $f ~/Pictures/"))
+  (sh "scrot" "-s" "-f" "-e" "mv $f ~/Pictures/"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -479,3 +479,25 @@ by number and if the @var{windows-list} is provided, it is shown unsorted (as-is
 
 (defcommand switch-display () ()
   (sh "set-display" "auto"))
+
+(defvar *rk--countdown-timer* nil)
+(defcommand rk-countdown-timer () ()
+  (unless *rk--countdown-timer*
+    (setq *rk--countdown-timer*
+          (run-with-timer 60
+                          nil
+                          (lambda ()
+                            (message-no-timeout "*** Countdown Alarm ***")
+                            (setq *rk--countdown-timer* nil))))))
+
+(defun fmt-rk-countdown-timer (ml)
+  (declare (ignore ml))
+  (if *rk--countdown-timer*
+      (format nil "[T:~d]"
+              (round
+               (/ (- (timer-time *rk--countdown-timer*)
+                     (get-internal-real-time))
+                  internal-time-units-per-second)))
+      ""))
+
+(stumpwm:add-screen-mode-line-formatter #\T 'fmt-rk-countdown-timer)
