@@ -101,7 +101,7 @@
       (message "^B^1sh error: ~a" c))))
 
 (defun start-apps ()
-  (redshift-on)
+  ;; (redshift-on)
   (start-screen-saver)
   (clipboard-history:start-clipboard-manager)
   ;; (clipboard-history:stop-clipboard-manager)
@@ -113,10 +113,10 @@
   ;; this fixes screen tearing (at least on debian buster)
   ;; (sh "compton" "-b")
   ;; (sh "xwrits" "+breakclock" "typetime=27" "breaktime=3")
-  (emacs)
+  ;; (emacs)
   ;; (chrome)
   ;; (chromium)
-  (firefox)
+  ;; (firefox)
   )
 
 (defun init-vars ()
@@ -305,6 +305,8 @@
   (setup-touchpad)
   (setup-rollermouse)
   (%grename "A" (current-group))
+  (start-apps)
+  #+nil
   (let ((start-appsp (getenv "STUMPWM_START_APPS")))
     (when (and start-appsp (equal "t" start-appsp))
       (start-apps))))
