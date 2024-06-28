@@ -196,13 +196,13 @@
 (defun get-brightness ()
   (let* ((*read-eval* nil)
          (current (read-from-string
-                   (sh< "xbacklight" "-get"))))
+                   (sh< "backlight" "-q"))))
     (round current)))
 
 (defcommand change-brightness (amount) ((:number "Amount: "))
   (let* ((cur (get-brightness))
          (next (min 100 (max 0 (+ cur amount)))))
-    (sh "xbacklight" "-set" (format nil "~d" next))
+    (sh "backlight" (format nil "~d" next))
     (message
      (concat "Brightness: "
              (format nil "~C^B~A%" #\Newline next)
@@ -232,7 +232,10 @@
                                    (sh< "which" "chromium")))
                      (string-not-empty
                       (string-trim '(#\space #\newline)
-                                   (sh< "which" "chromium-browser"))))))
+                                   (sh< "which" "chromium-browser")))
+                     (string-not-empty
+                      (string-trim '(#\space #\newline)
+                                   (sh< "which" "chrome"))))))
     (if browser
         (sh browser)
         (message "No candidate found for chromium browser"))))

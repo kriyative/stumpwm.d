@@ -24,11 +24,11 @@
 (load ".stumpwm.d/overrides.lisp")
 (load ".stumpwm.d/core.lisp")
 (load ".stumpwm.d/swank.lisp")
-(load ".stumpwm.d/audio.lisp")
+;; (load ".stumpwm.d/audio.lisp")
 (load ".stumpwm.d/commands.lisp")
 (load ".stumpwm.d/windmove.lisp")
 (load ".stumpwm.d/modules.lisp")
-(load ".stumpwm.d/notify.lisp")
+;; (load ".stumpwm.d/notify.lisp")
 ;; (load ".stumpwm.d/fonts.lisp")
 (load ".stumpwm.d/ctrlx.lisp")
 
@@ -102,7 +102,7 @@
 
 (defun start-apps ()
   ;; (redshift-on)
-  (start-screen-saver)
+  ;; (start-screen-saver)
   (clipboard-history:start-clipboard-manager)
   ;; (clipboard-history:stop-clipboard-manager)
 
@@ -134,11 +134,12 @@
                                           (if (ignore-errors (truename "Mail"))
                                               "| %U"
                                               "")
-                                          " | %a"
-                                          " | %C| %M"
-                                          " | %W: %B"
+                                          ;; " | %a"
+                                          ;; " | %C| %M"
+                                          ;; " | %W: %B"
                                           " | %I"
-                                          " | %d")
+                                          " | %d"
+                                          )
         cpu::*cpu-modeline-fmt* "%c"
         mem::*mem-modeline-fmt* "MEM: %a"
         *hidden-window-color* "^7*"
@@ -302,7 +303,7 @@
   ;; (capslock-as-hyper)
   (set-root-window-background-color 0)
   (init-mouse-pointer)
-  (setup-touchpad)
+  ;; (setup-touchpad)
   (setup-rollermouse)
   (%grename "A" (current-group))
   (start-apps)
