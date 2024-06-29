@@ -3,7 +3,7 @@
 (load-module "clipboard-history")
 (load-module "cpu")
 (load-module "mem")
-(load-module "wifi")
+(load-module "wpa")
 
 ;;;;;;;;;;;;;;;; mu4e-mail-biff ;;;;;;;;;;;;;;;;
 
