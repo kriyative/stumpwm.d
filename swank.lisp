@@ -1,13 +1,12 @@
 (in-package :stumpwm)
 
-;; ;; load Swank so we can connect with SLIME
-(load ".emacs.d/elpa/slime-20240605.1810/swank-loader.lisp")
-;; (load ".emacs.d/straight/build/slime/swank-loader.lisp")
+;; the following is depends on cl-slime package being loaded in Debian
+(load "/usr/share/common-lisp/source/slime/swank-loader.lisp")
 (swank-loader:init)
 (defvar *swank-p* nil)
 
 ;; ;; define swank command to start swank server on port 4005
-(defcommand swank () ()
+(defcommand run-swank () ()
   "Starts a swank server on port 4005 and notifies the user."
   (setf stumpwm:*top-level-error-action* :break)
   (if *swank-p*

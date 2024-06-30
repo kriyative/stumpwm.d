@@ -279,7 +279,7 @@
                (format nil "swap-or-pull ~d" i)))))
 
 (defun start-stumpwm ()
-  (swank)
+  (run-swank)
   (init-vars)
   (set-normal-gravity :top)
   (set-transient-gravity :center)
